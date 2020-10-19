@@ -2,7 +2,7 @@
 [![Actions Status](https://github.com/waldronbios2/session5/workflows/build/badge.svg)](https://github.com/waldronbios2/templatesession/actions)
 <!-- badges: end -->
 
-# Session N: title
+# Session 5: Log-linear models part 2
 
 ## Lecture
 
