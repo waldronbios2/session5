@@ -92,7 +92,7 @@ $$
     + filtered to only `sex` "M" or "F", `ethn` "White", "AA", "Hispanic"
 
 \small
-```{r loadandfilter, echo=FALSE}
+```{r loadandfilter, echo=FALSE, message=FALSE}
 suppressPackageStartupMessages({
   library(readr)
   library(dplyr)
@@ -284,27 +284,33 @@ legend(
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 library(MASS)
-fit.negbin <- glm.nb(shared_syr ~ sex + ethn + homeless,
-                     data = needledat2)
+fit.negbin <- MASS::glm.nb(shared_syr ~ sex +
+                             ethn + homeless,
+                           data = needledat2)
+```
+
+## 
+
+\tiny
+```{r}
 summary(fit.negbin)
 ```
 
 ## Likelihood ratio test 
 
-Recall the Deviance:
+Basis: Under $H_0$: no improvement in fit by more complex model, difference in model residual deviances is $\chi^2$-distributed.
 
-$\Delta (\textrm{D}) = -2 * \Delta (\textrm{log likelihood})$
-
-And recall the difference in deviance under $H_0$ (no improvement in fit) is *chi-square distributed*, with df equal to the difference in df of the two models:
+Deviance: $\Delta (\textrm{D}) = -2 * \Delta (\textrm{log likelihood})$
 
 ```{r}
 (ll.negbin <- logLik(fit.negbin))
 (ll.pois <- logLik(fit.pois))
-pchisq(2 * (ll.negbin - ll.pois), df=1, lower.tail=FALSE)
+pchisq(2 * (ll.negbin - ll.pois), df=1, 
+       lower.tail=FALSE)
 ```
 
 
-## Risky Drug Use Behavior: NB regression residuals plots
+## NB regression residuals plots
 
 ```{r, echo=FALSE, warning=FALSE}
 par(mfrow = c(2, 2))
