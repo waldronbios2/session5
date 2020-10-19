@@ -33,7 +33,11 @@ institute: CUNY SPH Biostatistics 2
     + Negative Binomial distribution
 4. Zero-inflated models
 
+Resources:
+
 * Vittinghoff section 8.1-8.3
+* Short tutorials on regression in R (and Stata, SAS, SPSS, Mplus)
+    + https://stats.idre.ucla.edu/other/dae/
 
 
 # Review
@@ -491,13 +495,9 @@ plotpanel2(fit.ZInegbin, main = "Normal Q-Q Plot\n Zero-inflated Negative Binomi
 ```
 _still_ over-dispersed - ideas?
 
+## Summary / Conclusions
 
-## Resources for R (and SAS)
-
-* Short, practical tutrorials on regression in R and SAS from UCLA at http://www.ats.ucla.edu/stat/:
-    + Poisson Regression: http://www.ats.ucla.edu/stat/r/dae/poissonreg.htm
-    + Negative Binomial: http://www.ats.ucla.edu/stat/r/dae/nbreg.htm
-    + Zero-inflated Poisson: http://www.ats.ucla.edu/stat/r/dae/zipoisson.htm
-    + Zero-inflated Negative Binomial: http://www.ats.ucla.edu/stat/r/dae/zinbreg.htm
-    
-
+* These are multiplicative models
+* Fitting zero-inflated models can be problematic (convergence, over-complicated default models), especially for small samples
+* Use QQ and residuals plots to assess model fit
+* Can use LRT to compare nested models
