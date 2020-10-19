@@ -288,30 +288,6 @@ y_i \sim Poisson(\lambda_i)
 
 \small
 
-\begin{verbatim}
-## 
-## -- Column specification --------------------------------------------------------
-## cols(
-##   id = col_double(),
-##   sex = col_character(),
-##   ethn = col_character(),
-##   age = col_double(),
-##   dprsn_dx = col_double(),
-##   sexabuse = col_double(),
-##   shared_syr = col_double(),
-##   hivstat = col_double(),
-##   hplsns = col_double(),
-##   nivdu = col_double(),
-##   shsyryn = col_double(),
-##   sqrtnivd = col_double(),
-##   logshsyr = col_double(),
-##   polydrug = col_double(),
-##   sqrtninj = col_double(),
-##   homeless = col_double(),
-##   shsyr = col_double()
-## )
-\end{verbatim}
-
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(needledat2}\OperatorTok{$}\NormalTok{shared_syr)}
@@ -501,8 +477,21 @@ Regression}
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(MASS)}
-\NormalTok{fit.negbin <-}\StringTok{ }\KeywordTok{glm.nb}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }\NormalTok{homeless,}
-                     \DataTypeTok{data =}\NormalTok{ needledat2)}
+\NormalTok{fit.negbin <-}\StringTok{ }\NormalTok{MASS}\OperatorTok{::}\KeywordTok{glm.nb}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}
+\StringTok{                             }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }\NormalTok{homeless,}
+                           \DataTypeTok{data =}\NormalTok{ needledat2)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+\protect\hypertarget{section}{}
+
+\tiny
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(fit.negbin)}
 \end{Highlighting}
 \end{Shaded}
@@ -510,7 +499,7 @@ Regression}
 \begin{verbatim}
 ## 
 ## Call:
-## glm.nb(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
+## MASS::glm.nb(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
 ##     init.theta = 0.07743871374, link = log)
 ## 
 ## Deviance Residuals: 
@@ -548,13 +537,11 @@ Regression}
 \begin{frame}[fragile]{Likelihood ratio test}
 \protect\hypertarget{likelihood-ratio-test}{}
 
-Recall the Deviance:
+Basis: Under \(H_0\): no improvement in fit by more complex model,
+difference in model residual deviances is \(\chi^2\)-distributed.
 
+Deviance:
 \(\Delta (\textrm{D}) = -2 * \Delta (\textrm{log likelihood})\)
-
-And recall the difference in deviance under \(H_0\) (no improvement in
-fit) is \emph{chi-square distributed}, with df equal to the difference
-in df of the two models:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -578,7 +565,8 @@ in df of the two models:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{pchisq}\NormalTok{(}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{(ll.negbin }\OperatorTok{-}\StringTok{ }\NormalTok{ll.pois), }\DataTypeTok{df=}\DecValTok{1}\NormalTok{, }\DataTypeTok{lower.tail=}\OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{pchisq}\NormalTok{(}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{(ll.negbin }\OperatorTok{-}\StringTok{ }\NormalTok{ll.pois), }\DataTypeTok{df=}\DecValTok{1}\NormalTok{, }
+       \DataTypeTok{lower.tail=}\OtherTok{FALSE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -588,10 +576,10 @@ in df of the two models:
 
 \end{frame}
 
-\begin{frame}{Risky Drug Use Behavior: NB regression residuals plots}
-\protect\hypertarget{risky-drug-use-behavior-nb-regression-residuals-plots}{}
+\begin{frame}{NB regression residuals plots}
+\protect\hypertarget{nb-regression-residuals-plots}{}
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-10-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-11-1.pdf}
 
 \end{frame}
 
@@ -612,7 +600,7 @@ set to zero by \emph{1.}
 \begin{frame}{Poisson Distribution with Zero Inflation}
 \protect\hypertarget{poisson-distribution-with-zero-inflation}{}
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-11-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-12-1.pdf}
 
 \end{frame}
 
@@ -869,14 +857,14 @@ I invisibly define functions \texttt{plotpanel1} and \texttt{plotpanel2}
 that will work for all types of models (see lab). These use Pearson
 residuals.
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-20-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-21-1.pdf}
 
 \end{frame}
 
 \begin{frame}{Quantile-quantile plots for residuals}
 \protect\hypertarget{quantile-quantile-plots-for-residuals}{}
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-21-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-22-1.pdf}
 \emph{still} over-dispersed - ideas?
 
 \end{frame}
@@ -886,187 +874,16 @@ residuals.
 
 \tiny
 
-Dependent variable:
-
-shared\_syr
-
-Poisson
-
-negative
-
-zero-inflated
-
-binomial
-
-count data
-
-(1)
-
-(2)
-
-(3)
-
-(4)
-
-(5)
-
-sexM
-
--0.925***
-
--1.015
-
--1.473***
-
--2.228**
-
--1.438
-
-(0.121)
-
-(0.829)
-
-(0.144)
-
-(0.935)
-
-(0.892)
-
-ethnHispanic
-
-1.465***
-
-1.342
-
--0.152
-
--0.412
-
-0.481
-
-(0.160)
-
-(1.320)
-
-(0.158)
-
-(0.983)
-
-(1.166)
-
-ethnWhite
-
-0.061
-
-0.243
-
--0.524***
-
--0.430
-
--0.074
-
-(0.133)
-
-(0.776)
-
-(0.146)
-
-(0.865)
-
-(0.811)
-
-homelessyes
-
-1.285***
-
-1.644**
-
-1.203***
-
-1.946***
-
-1.621**
-
-(0.127)
-
-(0.707)
-
-(0.146)
-
-(0.710)
-
-(0.677)
-
-Constant
-
-0.723***
-
-0.464
-
-3.217***
-
-2.841**
-
-2.085
-
-(0.145)
-
-(0.856)
-
-(0.180)
-
-(1.184)
-
-(1.427)
-
-Observations
-
-115
-
-115
-
-115
-
-115
-
-115
-
-Log Likelihood
-
--730.013
-
--148.128
-
--299.790
-
--142.750
-
--146.768
-
-theta
-
-0.077*** (0.018)
-
-Akaike Inf. Crit.
-
-1,470.027
-
-306.255
-
-Note:
-
-\emph{p\textless0.1; \textbf{p\textless0.05; }}p\textless0.01
-
-Zero-inflated models are 3) Poisson, 4) Negative Binomial, and 5)
-Negative Binomial with intercept-only zero inflation model.
+\% Error: Unrecognized object type. Zero-inflated models are 3) Poisson,
+4) Negative Binomial, and 5) Negative Binomial with intercept-only zero
+inflation model.
 
 \end{frame}
 
 \begin{frame}{Example of plotting observed and predicted counts}
 \protect\hypertarget{example-of-plotting-observed-and-predicted-counts}{}
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-23-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-24-1.pdf}
 
 \end{frame}
 
