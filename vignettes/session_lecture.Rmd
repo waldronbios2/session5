@@ -86,10 +86,9 @@ $$
 
 ## Example: Risky Drug Use Behavior
 
-* Load the "needle_sharing" dataset
 * Outcome is # times the drug user shared a syringe in the past month (`shared_syr`)
 * Predictors: `sex`, `ethn`, `homeless`
-    + filtered to only `sex` "M" or "F", `ethn` "White", "AA", "Hispanic"
+    + filtered to `sex` "M" or "F", `ethn` "White", "AA", "Hispanic"
 
 \small
 ```{r loadandfilter, echo=FALSE, message=FALSE}
@@ -137,16 +136,16 @@ plot(
 * There are a _lot_ of zeros and variance is much greater than mean
     + Poisson model is probably not a good fit
 
-## Risky Drug Use Behavior: fitting a Poisson model
+## Fitting a Poisson model
 
 
-```{r, results='hide', cache=TRUE}
+```{r, results='hide'}
 fit.pois <- glm(shared_syr ~ sex + ethn + homeless,
                 data = needledat2,
                 family = poisson(link = "log"))
 ```
 
-## Risky Drug Use Behavior: residuals plots
+## Residuals plots
 
 ```{r, echo=FALSE, warning=FALSE}
 par(mfrow = c(2, 2))
@@ -158,14 +157,10 @@ plot(fit.pois)
 
 ## When the Poisson model doesn't fit
 
-* inference from log-linear models is sensitive to assumptions on the distribution of residuals (e.g. Poisson)
-* In the Poisson distribution, the variance is equal to the mean.
-* _i.e._ if subjects with a particular pattern of covariates have a mean of 4 visits/yr, then variance is also 4 and the standard deviation is 2 visits / yr.
-* The Poisson distribution often fails when the variance exceeds the mean
-    + You can _check_ this assumption      
-* Can use alternative random distributions:
+1. Variance > mean (over-dispersion)
     + Negative binomial distribution
-* Can introduce zero-inflation
+2. Excess zeros (zero inflation)
+    + Can introduce zero-inflation
 
 ## Negative binomial distribution
 
@@ -280,7 +275,7 @@ legend(
 )
 ```
 
-## Risky drug behavior: Negative Binomial Regression
+## Negative Binomial Regression
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 library(MASS)
@@ -370,26 +365,29 @@ legend(
 )
 ```
 
-## Risky drug behavior: Zero-inflated Poisson regression
+## Zero-inflated Poisson regression
 
 ```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(pscl)
-fit.ZIpois <- zeroinfl(shared_syr ~ sex + ethn + homeless,
-                       dist = "poisson",
-                       data = needledat2)
+fit.ZIpois <-
+  pscl::zeroinfl(shared_syr~sex+ethn+homeless,
+                 dist = "poisson",
+                 data = needledat2)
 ```
 
-## Zero-inflated Poisson regression - the model
+## 
 
+\tiny
 ```{r}
 summary(fit.ZIpois)
 ```
 
 
-## Risky drug behavior: Zero-inflated Negative Binomial regression
+## Zero-inflated Negative Binomial regression
 
 ```{r, echo=TRUE, results='hide', message=FALSE}
-fit.ZInegbin <- zeroinfl(shared_syr ~ sex + ethn + homeless,
+fit.ZInegbin <- 
+  pscl::zeroinfl(shared_syr~sex+ethn+homeless,
                          dist = "negbin",
                          data = needledat2)
 ```
@@ -397,25 +395,26 @@ fit.ZInegbin <- zeroinfl(shared_syr ~ sex + ethn + homeless,
 * *NOTE*: zero-inflation model can include any of your variables as predictors
 * *WARNING* Default in `zerinfl()` function is to use _all_ variables as predictors in logistic model 
 
-## Zero-inflated Negative Binomial regression - model 1
+## 
 
 \tiny
 ```{r}
 summary(fit.ZInegbin)
 ```
 
-## Zero-inflated Negative Binomial regression - simplified ZI model
+## Zero-inflated NB - simplified
 
 * Model is much more interpretable if the exposure of interest is _not_ included in the zero-inflation model.
 * E.g. with HIV status as the only predictor in zero-inflation model:
 
 ```{r, echo=TRUE, results='hide', message=FALSE}
-fit.ZInb2 <- zeroinfl(shared_syr ~ sex + ethn + homeless + hiv | hiv,
+fit.ZInb2 <- pscl::zeroinfl(shared_syr ~ sex + ethn + 
+                        homeless + hiv | hiv,
                       dist = "negbin",
                       data = needledat2)
 ```
 
-## Zero-inflated Negative Binomial regression - model 2
+## 
 
 \tiny
 ```{r}
@@ -423,13 +422,29 @@ summary(fit.ZInb2)
 ```
 
 
-## Intercept-only zero-inflation model
+## Intercept-only ZI model
+
+```{r}
+fit.ZInb3 <-
+  pscl::zeroinfl(shared_syr~sex+ethn+homeless|1,
+           dist = "negbin",
+           data = needledat2)
+```
+
+## 
 
 \tiny
 ```{r}
-fit.ZInb3 <- zeroinfl(shared_syr~sex+ethn+homeless|1, 
-                        dist="negbin", data=needledat2)
 summary(fit.ZInb3)
+```
+
+
+## Confidence intervals
+
+Use the `confint()` function for all these models (don't try to specify which package confint comes from). E.g.:
+
+```{r}
+confint(fit.ZInb3)
 ```
 
 
@@ -437,70 +452,45 @@ summary(fit.ZInb3)
 
 I invisibly define functions `plotpanel1` and `plotpanel2` that will work for all types of models (see lab).  These use Pearson residuals.
 ```{r, echo=FALSE}
-plotpanel1 <- function(fit, ...){
-  plot(x=predict(fit), y=residuals(fit, type="pearson"), 
-       xlab="Predicted Values", ylab="Pearson Residuals", ...)
-  abline(h=0, lty=3)
-  lines(lowess(x=predict(fit), y=resid(fit, type="pearson")), 
-        col="red")
+plotpanel1 <- function(fit, ...) {
+  plot(
+    x = predict(fit),
+    y = residuals(fit, type = "pearson"),
+    xlab = "Predicted Values",
+    ylab = "Pearson Residuals",
+    ...
+  )
+  abline(h = 0, lty = 3)
+  lines(lowess(x = predict(fit), y = resid(fit, type = "pearson")),
+        col = "red")
 }
-plotpanel2 <- function(fit, ...){
-  resids <- scale(residuals(fit, type="pearson"))
-  qqnorm(resids, ylab="Std Pearson resid.", ...)
+plotpanel2 <- function(fit, ...) {
+  resids <- scale(residuals(fit, type = "pearson"))
+  qqnorm(resids, ylab = "Std Pearson resid.", ...)
   qqline(resids)
 }
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
-par(mfrow=c(2,2))
-plotpanel1(fit.pois, main="Residuals vs. Fitted\n Poisson")
-plotpanel1(fit.negbin, main="Residuals vs. Fitted\n Negative Binomial")
-plotpanel1(fit.ZIpois, main="Residuals vs. Fitted\n Zero-inflated Poisson")
-plotpanel1(fit.ZInegbin, main="Residuals vs. Fitted\n Zero-inflated Negative Binomial")
+par(mfrow = c(2, 2))
+plotpanel1(fit.pois, main = "Residuals vs. Fitted\n Poisson")
+plotpanel1(fit.negbin, main = "Residuals vs. Fitted\n Negative Binomial")
+plotpanel1(fit.ZIpois, main = "Residuals vs. Fitted\n Zero-inflated Poisson")
+plotpanel1(fit.ZInegbin, main = "Residuals vs. Fitted\n Zero-inflated Negative Binomial")
 ```
 
 
 ## Quantile-quantile plots for residuals
 
 ```{r, echo=FALSE, warning=FALSE}
-par(mfrow=c(2,2))
-plotpanel2(fit.pois, main="Normal Q-Q Plot\n Poisson")
-plotpanel2(fit.negbin, main="Normal Q-Q Plot\n Negative Binomial")
-plotpanel2(fit.ZIpois, main="Normal Q-Q Plot\n Zero-inflated Poisson")
-plotpanel2(fit.ZInegbin, main="Normal Q-Q Plot\n Zero-inflated Negative Binomial")
+par(mfrow = c(2, 2))
+plotpanel2(fit.pois, main = "Normal Q-Q Plot\n Poisson")
+plotpanel2(fit.negbin, main = "Normal Q-Q Plot\n Negative Binomial")
+plotpanel2(fit.ZIpois, main = "Normal Q-Q Plot\n Zero-inflated Poisson")
+plotpanel2(fit.ZInegbin, main = "Normal Q-Q Plot\n Zero-inflated Negative Binomial")
 ```
 _still_ over-dispersed - ideas?
 
-## Inference from the different models
-
-\tiny
-```{r, echo=FALSE, results="asis", message=FALSE}
-library(stargazer)
-stargazer(fit.pois, fit.negbin, fit.ZIpois, fit.ZInegbin, fit.ZInb3, 
-          title="", type="html",
-          style="default", header=FALSE)
-```
-Zero-inflated models are 3) Poisson, 4) Negative Binomial, and 5) Negative Binomial with intercept-only zero inflation model.
-
-## Example of plotting observed and predicted counts
-
-```{r, echo=FALSE}
-observed <- data.frame(table(needledat2$shared_syr))
-fit.lm <- lm(shared_syr~sex+ethn+homeless, data=needledat2)
-pred.lm <- data.frame(table(round(predict(fit.lm))))
-pred.pois <- data.frame(table(round(predict(fit.pois, type="response"))))
-pred.negbin <- data.frame(table(round(predict(fit.negbin, type="response"))))
-pred.ZIpois <- data.frame(table(round(predict(fit.ZIpois, type="response"))))
-pred.ZInegbin <- data.frame(table(round(predict(fit.ZInegbin, type="response"))))
-
-plot(as.numeric(observed[, 1]), observed[, 2], type="l", lwd=2,
-     xlab="Counts", ylab="Frequency")
-lines(as.numeric(pred.pois[, 1]), pred.pois[, 2], lty=2, lwd=2)
-lines(as.numeric(pred.negbin[, 1]), pred.negbin[, 2], lty=3, lwd=2)
-lines(as.numeric(pred.ZInegbin[, 1]), pred.ZInegbin[, 2], lty=4, lwd=2)
-legend("topright", legend=c("Observed", "Poisson", "Negbin", "ZI negbin"),
-       lty=1:4, lwd=2)
-```
 
 ## Resources for R (and SAS)
 

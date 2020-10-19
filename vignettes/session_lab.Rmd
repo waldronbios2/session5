@@ -14,25 +14,123 @@ output:
 always_allow_html: true
 ---
 
-**Learning objectives**
+# Learning objectives {-}
 
 1. Fit Poisson, NB, and zero-inflated loglinear models
 2. Perform nested deviance test for model selection
 3. Make diagnostic plots of loglinear models
 
-**Exercises**
 
-1. Load the needle-sharing dataset. 
-    + Compare the mean to the variance of the outcome variable. 
-    + Calculate what fraction of the counts are zero.
-    + Create a histogram of the outcome variable.
+# Exercises: load the needle-sharing dataset. 
 
-2. Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.
+```{r loadandfilter, echo=FALSE, message=FALSE}
+suppressPackageStartupMessages({
+  library(readr)
+  library(dplyr)
+})
+needledat <- readr::read_csv("needle_sharing.csv")
+needledat2 <- needledat %>%
+  dplyr::filter(sex %in% c("M", "F") &
+                  ethn %in% c("White", "AA", "Hispanic") &
+                  !is.na(homeless)) %>%
+  mutate(
+    homeless = recode(homeless, "0" = "no", "1" = "yes"),
+    hiv = recode(
+      hivstat,
+      "0" = "negative",
+      "1" = "positive",
+      "2" = "yes"
+    )
+  )
+```
 
-3. Use chi-square nested deviance tests to assess which model seems to fit best.
+## Compare the mean to the variance of the outcome variable. 
 
-4. Create residual deviance plots using the functions defined in the lecture.
+## Calculate what fraction of the counts are zero.
 
-5. Plot the frequences of predicted and observed counts for each model.
+## Create a histogram of the outcome variable.
 
-6. Try fitting the needle dataset using a zero-inflated gamma count distribution
+# Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.
+
+**Poisson**
+```{r}
+fit.pois <- glm(shared_syr ~ sex + ethn + homeless,
+                data = needledat2,
+                family = poisson(link = "log"))
+```
+
+**Negative Binomial**
+```{r}
+library(MASS)
+fit.negbin <- MASS::glm.nb(shared_syr ~ sex +
+                             ethn + homeless,
+                           data = needledat2)
+```
+
+** Zero-inflated Poisson**
+```{r}
+library(pscl)
+fit.ZIpois <- pscl::zeroinfl(shared_syr ~ sex +
+                         ethn + homeless,
+                       dist = "poisson",
+                       data = needledat2)
+```
+
+**Intercept-only ZI model**
+
+```{r}
+fit.ZInb3 <-
+  pscl::zeroinfl(shared_syr ~ sex + ethn + homeless | 1,
+           dist = "negbin",
+           data = needledat2)
+```
+
+# Use chi-square nested deviance tests to assess which model seems to fit best.
+
+# Create residual deviance plots using the functions defined in the lecture.
+
+# Plot the frequences of predicted and observed counts for each model.
+
+# Example of plotting observed and predicted counts
+
+```{r, echo=FALSE}
+observed <- data.frame(table(needledat2$shared_syr))
+fit.lm <- lm(shared_syr ~ sex + ethn + homeless, data = needledat2)
+pred.lm <- data.frame(table(round(predict(fit.lm))))
+pred.pois <-
+  data.frame(table(round(predict(fit.pois, type = "response"))))
+pred.negbin <-
+  data.frame(table(round(predict(fit.negbin, type = "response"))))
+pred.ZIpois <-
+  data.frame(table(round(predict(fit.ZIpois, type = "response"))))
+pred.ZInb3 <-
+  data.frame(table(round(predict(fit.ZInb3, type = "response"))))
+
+plot(
+  as.numeric(observed[, 1]),
+  observed[, 2],
+  type = "l",
+  lwd = 2,
+  xlab = "Counts",
+  ylab = "Frequency"
+)
+lines(as.numeric(pred.pois[, 1]),
+      pred.pois[, 2],
+      lty = 2,
+      lwd = 2)
+lines(as.numeric(pred.negbin[, 1]),
+      pred.negbin[, 2],
+      lty = 3,
+      lwd = 2)
+lines(as.numeric(pred.ZInb3[, 1]),
+      pred.ZInb3[, 2],
+      lty = 4,
+      lwd = 2)
+legend(
+  "topright",
+  legend = c("Observed", "Poisson", "Negbin", "ZI negbin"),
+  lty = 1:4,
+  lwd = 2
+)
+```
+
