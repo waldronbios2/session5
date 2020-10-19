@@ -179,11 +179,10 @@ y_i \sim Poisson(\lambda_i)
 <h2 class="hasAnchor">
 <a href="#example-risky-drug-use-behavior" class="anchor"></a>Example: Risky Drug Use Behavior</h2>
 <ul>
-<li>Load the “needle_sharing” dataset</li>
 <li>Outcome is # times the drug user shared a syringe in the past month (<code>shared_syr</code>)</li>
 <li>Predictors: <code>sex</code>, <code>ethn</code>, <code>homeless</code>
 <ul>
-<li>filtered to only <code>sex</code> “M” or “F”, <code>ethn</code> “White”, “AA”, “Hispanic”</li>
+<li>filtered to <code>sex</code> “M” or “F”, <code>ethn</code> “White”, “AA”, “Hispanic”</li>
 </ul>
 </li>
 </ul>
@@ -208,17 +207,17 @@ y_i \sim Poisson(\lambda_i)
 </li>
 </ul>
 </div>
-<div id="risky-drug-use-behavior-fitting-a-poisson-model" class="section level2">
+<div id="fitting-a-poisson-model" class="section level2">
 <h2 class="hasAnchor">
-<a href="#risky-drug-use-behavior-fitting-a-poisson-model" class="anchor"></a>Risky Drug Use Behavior: fitting a Poisson model</h2>
+<a href="#fitting-a-poisson-model" class="anchor"></a>Fitting a Poisson model</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="va">fit.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
                 data <span class="op">=</span> <span class="va">needledat2</span>,
                 family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
-<div id="risky-drug-use-behavior-residuals-plots" class="section level2">
+<div id="residuals-plots" class="section level2">
 <h2 class="hasAnchor">
-<a href="#risky-drug-use-behavior-residuals-plots" class="anchor"></a>Risky Drug Use Behavior: residuals plots</h2>
+<a href="#residuals-plots" class="anchor"></a>Residuals plots</h2>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-5-1.png" width="700"> * Poisson model is definitely not a good fit.</p>
 </div>
 </div>
@@ -228,24 +227,18 @@ y_i \sim Poisson(\lambda_i)
 <div id="when-the-poisson-model-doesnt-fit" class="section level2">
 <h2 class="hasAnchor">
 <a href="#when-the-poisson-model-doesnt-fit" class="anchor"></a>When the Poisson model doesn’t fit</h2>
-<ul>
-<li>inference from log-linear models is sensitive to assumptions on the distribution of residuals (e.g. Poisson)</li>
-<li>In the Poisson distribution, the variance is equal to the mean.</li>
-<li>
-<em>i.e.</em> if subjects with a particular pattern of covariates have a mean of 4 visits/yr, then variance is also 4 and the standard deviation is 2 visits / yr.</li>
-<li>The Poisson distribution often fails when the variance exceeds the mean
-<ul>
-<li>You can <em>check</em> this assumption<br>
-</li>
-</ul>
-</li>
-<li>Can use alternative random distributions:
+<ol style="list-style-type: decimal">
+<li>Variance &gt; mean (over-dispersion)
 <ul>
 <li>Negative binomial distribution</li>
 </ul>
 </li>
+<li>Excess zeros (zero inflation)
+<ul>
 <li>Can introduce zero-inflation</li>
 </ul>
+</li>
+</ol>
 </div>
 <div id="negative-binomial-distribution" class="section level2">
 <h2 class="hasAnchor">
@@ -296,9 +289,9 @@ y_i \sim NB(\lambda_i, \theta)
 <p>Negative Binomial Distribution has two parameters: # of trials n, and probability of success p</p>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
-<div id="risky-drug-behavior-negative-binomial-regression" class="section level2">
+<div id="negative-binomial-regression" class="section level2">
 <h2 class="hasAnchor">
-<a href="#risky-drug-behavior-negative-binomial-regression" class="anchor"></a>Risky drug behavior: Negative Binomial Regression</h2>
+<a href="#negative-binomial-regression" class="anchor"></a>Negative Binomial Regression</h2>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/">MASS</a></span><span class="op">)</span>
 <span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
@@ -380,23 +373,24 @@ y_i \sim NB(\lambda_i, \theta)
 <a href="#poisson-distribution-with-zero-inflation" class="anchor"></a>Poisson Distribution with Zero Inflation</h2>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
-<div id="risky-drug-behavior-zero-inflated-poisson-regression" class="section level2">
+<div id="zero-inflated-poisson-regression" class="section level2">
 <h2 class="hasAnchor">
-<a href="#risky-drug-behavior-zero-inflated-poisson-regression" class="anchor"></a>Risky drug behavior: Zero-inflated Poisson regression</h2>
+<a href="#zero-inflated-poisson-regression" class="anchor"></a>Zero-inflated Poisson regression</h2>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/atahk/pscl">pscl</a></span><span class="op">)</span>
-<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
-                       dist <span class="op">=</span> <span class="st">"poisson"</span>,
-                       data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span>
+  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,
+                 dist <span class="op">=</span> <span class="st">"poisson"</span>,
+                 data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
 </div>
-<div id="zero-inflated-poisson-regression---the-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-poisson-regression---the-model" class="anchor"></a>Zero-inflated Poisson regression - the model</h2>
+<div id="section-1" class="section level2">
+<h2></h2>
+
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZIpois</span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
 ##     dist = "poisson")
 ## 
 ## Pearson residuals:
@@ -424,11 +418,12 @@ y_i \sim NB(\lambda_i, \theta)
 ## Number of iterations in BFGS optimization: 12 
 ## Log-likelihood: -299.8 on 10 Df</code></pre>
 </div>
-<div id="risky-drug-behavior-zero-inflated-negative-binomial-regression" class="section level2">
+<div id="zero-inflated-negative-binomial-regression" class="section level2">
 <h2 class="hasAnchor">
-<a href="#risky-drug-behavior-zero-inflated-negative-binomial-regression" class="anchor"></a>Risky drug behavior: Zero-inflated Negative Binomial regression</h2>
+<a href="#zero-inflated-negative-binomial-regression" class="anchor"></a>Zero-inflated Negative Binomial regression</h2>
 <div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="va">fit.ZInegbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+<span class="va">fit.ZInegbin</span> <span class="op">&lt;-</span> 
+  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,
                          dist <span class="op">=</span> <span class="st">"negbin"</span>,
                          data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
 <ul>
@@ -438,15 +433,14 @@ y_i \sim NB(\lambda_i, \theta)
 <em>WARNING</em> Default in <code>zerinfl()</code> function is to use <em>all</em> variables as predictors in logistic model</li>
 </ul>
 </div>
-<div id="zero-inflated-negative-binomial-regression---model-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-negative-binomial-regression---model-1" class="anchor"></a>Zero-inflated Negative Binomial regression - model 1</h2>
+<div id="section-2" class="section level2">
+<h2></h2>
 
 <div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInegbin</span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
 ##     dist = "negbin")
 ## 
 ## Pearson residuals:
@@ -476,28 +470,28 @@ y_i \sim NB(\lambda_i, \theta)
 ## Number of iterations in BFGS optimization: 24 
 ## Log-likelihood: -142.8 on 11 Df</code></pre>
 </div>
-<div id="zero-inflated-negative-binomial-regression---simplified-zi-model" class="section level2">
+<div id="zero-inflated-nb---simplified" class="section level2">
 <h2 class="hasAnchor">
-<a href="#zero-inflated-negative-binomial-regression---simplified-zi-model" class="anchor"></a>Zero-inflated Negative Binomial regression - simplified ZI model</h2>
+<a href="#zero-inflated-nb---simplified" class="anchor"></a>Zero-inflated NB - simplified</h2>
 <ul>
 <li>Model is much more interpretable if the exposure of interest is <em>not</em> included in the zero-inflation model.</li>
 <li>E.g. with HIV status as the only predictor in zero-inflation model:</li>
 </ul>
 <div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="va">fit.ZInb2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span> <span class="op">+</span> <span class="va">hiv</span> <span class="op">|</span> <span class="va">hiv</span>,
+<span class="va">fit.ZInb2</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> 
+                        <span class="va">homeless</span> <span class="op">+</span> <span class="va">hiv</span> <span class="op">|</span> <span class="va">hiv</span>,
                       dist <span class="op">=</span> <span class="st">"negbin"</span>,
                       data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
 </div>
-<div id="zero-inflated-negative-binomial-regression---model-2" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-negative-binomial-regression---model-2" class="anchor"></a>Zero-inflated Negative Binomial regression - model 2</h2>
+<div id="section-3" class="section level2">
+<h2></h2>
 
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInb2</span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, data = needledat2, 
-##     dist = "negbin")
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, 
+##     data = needledat2, dist = "negbin")
 ## 
 ## Pearson residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -526,17 +520,23 @@ y_i \sim NB(\lambda_i, \theta)
 ## Number of iterations in BFGS optimization: 12 
 ## Log-likelihood: -122.5 on 11 Df</code></pre>
 </div>
-<div id="intercept-only-zero-inflation-model" class="section level2">
+<div id="intercept-only-zi-model" class="section level2">
 <h2 class="hasAnchor">
-<a href="#intercept-only-zero-inflation-model" class="anchor"></a>Intercept-only zero-inflation model</h2>
-
+<a href="#intercept-only-zi-model" class="anchor"></a>Intercept-only ZI model</h2>
 <div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="va">fit.ZInb3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span><span class="op">|</span><span class="fl">1</span>, 
-                        dist<span class="op">=</span><span class="st">"negbin"</span>, data<span class="op">=</span><span class="va">needledat2</span><span class="op">)</span>
+<span class="va">fit.ZInb3</span> <span class="op">&lt;-</span>
+  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span><span class="op">|</span><span class="fl">1</span>,
+           dist <span class="op">=</span> <span class="st">"negbin"</span>,
+           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+</div>
+<div id="section-4" class="section level2">
+<h2></h2>
+
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, 
 ##     dist = "negbin")
 ## 
 ## Pearson residuals:
@@ -562,27 +562,30 @@ y_i \sim NB(\lambda_i, \theta)
 ## Number of iterations in BFGS optimization: 13 
 ## Log-likelihood: -146.8 on 7 Df</code></pre>
 </div>
+<div id="confidence-intervals" class="section level2">
+<h2 class="hasAnchor">
+<a href="#confidence-intervals" class="anchor"></a>Confidence intervals</h2>
+<p>Use the <code><a href="https://rdrr.io/r/stats/confint.html">confint()</a></code> function for all these models (don’t try to specify which package confint comes from). E.g.:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/confint.html">confint</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></pre></div>
+<pre><code>##                         2.5 %    97.5 %
+## count_(Intercept)  -0.7108906 4.8817285
+## count_sexM         -3.1861592 0.3099794
+## count_ethnHispanic -1.8048349 2.7674386
+## count_ethnWhite    -1.6630517 1.5146931
+## count_homelessyes   0.2937565 2.9477701
+## zero_(Intercept)   -0.9685313 2.0106906</code></pre>
+</div>
 <div id="residuals-vs--fitted-values" class="section level2">
 <h2 class="hasAnchor">
 <a href="#residuals-vs--fitted-values" class="anchor"></a>Residuals vs. fitted values</h2>
 <p>I invisibly define functions <code>plotpanel1</code> and <code>plotpanel2</code> that will work for all types of models (see lab). These use Pearson residuals.</p>
-<p><img src="session_lecture_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
+<p><img src="session_lecture_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
 </div>
 <div id="quantile-quantile-plots-for-residuals" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quantile-quantile-plots-for-residuals" class="anchor"></a>Quantile-quantile plots for residuals</h2>
-<p><img src="session_lecture_files/figure-html/unnamed-chunk-22-1.png" width="700"><em>still</em> over-dispersed - ideas?</p>
-</div>
-<div id="inference-from-the-different-models" class="section level2">
-<h2 class="hasAnchor">
-<a href="#inference-from-the-different-models" class="anchor"></a>Inference from the different models</h2>
-
-<p>% Error: Unrecognized object type. Zero-inflated models are 3) Poisson, 4) Negative Binomial, and 5) Negative Binomial with intercept-only zero inflation model.</p>
-</div>
-<div id="example-of-plotting-observed-and-predicted-counts" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-of-plotting-observed-and-predicted-counts" class="anchor"></a>Example of plotting observed and predicted counts</h2>
-<p><img src="session_lecture_files/figure-html/unnamed-chunk-24-1.png" width="700"></p>
+<p><img src="session_lecture_files/figure-html/unnamed-chunk-24-1.png" width="700"><em>still</em> over-dispersed - ideas?</p>
 </div>
 <div id="resources-for-r-and-sas" class="section level2">
 <h2 class="hasAnchor">

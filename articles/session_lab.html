@@ -101,33 +101,96 @@
 
     
     
-<p><strong>Learning objectives</strong></p>
+<div id="learning-objectives" class="section level1 unnumbered">
+<h1 class="hasAnchor">
+<a href="#learning-objectives" class="anchor"></a>Learning objectives</h1>
 <ol style="list-style-type: decimal">
 <li>Fit Poisson, NB, and zero-inflated loglinear models</li>
 <li>Perform nested deviance test for model selection</li>
 <li>Make diagnostic plots of loglinear models</li>
 </ol>
-<p><strong>Exercises</strong></p>
-<ol style="list-style-type: decimal">
-<li>
-<p>Load the needle-sharing dataset.</p>
-<ul>
-<li>Compare the mean to the variance of the outcome variable.</li>
-<li>Calculate what fraction of the counts are zero.</li>
-<li>Create a histogram of the outcome variable.</li>
-</ul>
-</li>
-<li><p>Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.</p></li>
-<li><p>Use chi-square nested deviance tests to assess which model seems to fit best.</p></li>
-<li><p>Create residual deviance plots using the functions defined in the lecture.</p></li>
-<li><p>Plot the frequences of predicted and observed counts for each model.</p></li>
-<li><p>Try fitting the needle dataset using a zero-inflated gamma count distribution</p></li>
-</ol>
 </div>
+<div id="exercises-load-the-needle-sharing-dataset-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#exercises-load-the-needle-sharing-dataset-" class="anchor"></a>Exercises: load the needle-sharing dataset.</h1>
+<div id="compare-the-mean-to-the-variance-of-the-outcome-variable-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#compare-the-mean-to-the-variance-of-the-outcome-variable-" class="anchor"></a>Compare the mean to the variance of the outcome variable.</h2>
+</div>
+<div id="calculate-what-fraction-of-the-counts-are-zero-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calculate-what-fraction-of-the-counts-are-zero-" class="anchor"></a>Calculate what fraction of the counts are zero.</h2>
+</div>
+<div id="create-a-histogram-of-the-outcome-variable-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#create-a-histogram-of-the-outcome-variable-" class="anchor"></a>Create a histogram of the outcome variable.</h2>
+</div>
+</div>
+<div id="fit-poisson-and-negative-binomial-models-as-in-the-lecture-with-and-without-zero-inflation-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#fit-poisson-and-negative-binomial-models-as-in-the-lecture-with-and-without-zero-inflation-" class="anchor"></a>Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.</h1>
+<p><strong>Poisson</strong></p>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="va">fit.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+                data <span class="op">=</span> <span class="va">needledat2</span>,
+                family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></pre></div>
+<p><strong>Negative Binomial</strong></p>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/">MASS</a></span><span class="op">)</span></pre></div>
+<pre><code>## 
+## Attaching package: 'MASS'</code></pre>
+<pre><code>## The following object is masked from 'package:dplyr':
+## 
+##     select</code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
+                             <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+                           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<p>** Zero-inflated Poisson**</p>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/atahk/pscl">pscl</a></span><span class="op">)</span></pre></div>
+<pre><code>## Classes and Methods for R developed in the
+## Political Science Computational Laboratory
+## Department of Political Science
+## Stanford University
+## Simon Jackman
+## hurdle and zeroinfl functions by Achim Zeileis</code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
+                         <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+                       dist <span class="op">=</span> <span class="st">"poisson"</span>,
+                       data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<p><strong>Intercept-only ZI model</strong></p>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="va">fit.ZInb3</span> <span class="op">&lt;-</span>
+  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span> <span class="op">|</span> <span class="fl">1</span>,
+           dist <span class="op">=</span> <span class="st">"negbin"</span>,
+           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+</div>
+<div id="use-chi-square-nested-deviance-tests-to-assess-which-model-seems-to-fit-best-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#use-chi-square-nested-deviance-tests-to-assess-which-model-seems-to-fit-best-" class="anchor"></a>Use chi-square nested deviance tests to assess which model seems to fit best.</h1>
+</div>
+<div id="create-residual-deviance-plots-using-the-functions-defined-in-the-lecture-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#create-residual-deviance-plots-using-the-functions-defined-in-the-lecture-" class="anchor"></a>Create residual deviance plots using the functions defined in the lecture.</h1>
+</div>
+<div id="plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="anchor"></a>Plot the frequences of predicted and observed counts for each model.</h1>
+</div>
+<div id="example-of-plotting-observed-and-predicted-counts" class="section level1">
+<h1 class="hasAnchor">
+<a href="#example-of-plotting-observed-and-predicted-counts" class="anchor"></a>Example of plotting observed and predicted counts</h1>
+<p><img src="session_lab_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+</div>
+  </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

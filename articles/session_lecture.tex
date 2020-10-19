@@ -271,8 +271,6 @@ y_i \sim Poisson(\lambda_i)
 \begin{itemize}
 \tightlist
 \item
-  Load the ``needle\_sharing'' dataset
-\item
   Outcome is \# times the drug user shared a syringe in the past month
   (\texttt{shared\_syr})
 \item
@@ -281,8 +279,8 @@ y_i \sim Poisson(\lambda_i)
   \begin{itemize}
   \tightlist
   \item
-    filtered to only \texttt{sex} ``M'' or ``F'', \texttt{ethn}
-    ``White'', ``AA'', ``Hispanic''
+    filtered to \texttt{sex} ``M'' or ``F'', \texttt{ethn} ``White'',
+    ``AA'', ``Hispanic''
   \end{itemize}
 \end{itemize}
 
@@ -332,8 +330,8 @@ Exploratory plots
 
 \end{frame}
 
-\begin{frame}[fragile]{Risky Drug Use Behavior: fitting a Poisson model}
-\protect\hypertarget{risky-drug-use-behavior-fitting-a-poisson-model}{}
+\begin{frame}[fragile]{Fitting a Poisson model}
+\protect\hypertarget{fitting-a-poisson-model}{}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -345,8 +343,8 @@ Exploratory plots
 
 \end{frame}
 
-\begin{frame}{Risky Drug Use Behavior: residuals plots}
-\protect\hypertarget{risky-drug-use-behavior-residuals-plots}{}
+\begin{frame}{Residuals plots}
+\protect\hypertarget{residuals-plots}{}
 
 \includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-5-1.pdf}
 * Poisson model is definitely not a good fit.
@@ -359,28 +357,10 @@ Exploratory plots
 \begin{frame}{When the Poisson model doesn't fit}
 \protect\hypertarget{when-the-poisson-model-doesnt-fit}{}
 
-\begin{itemize}
+\begin{enumerate}
 \tightlist
 \item
-  inference from log-linear models is sensitive to assumptions on the
-  distribution of residuals (e.g.~Poisson)
-\item
-  In the Poisson distribution, the variance is equal to the mean.
-\item
-  \emph{i.e.} if subjects with a particular pattern of covariates have a
-  mean of 4 visits/yr, then variance is also 4 and the standard
-  deviation is 2 visits / yr.
-\item
-  The Poisson distribution often fails when the variance exceeds the
-  mean
-
-  \begin{itemize}
-  \tightlist
-  \item
-    You can \emph{check} this assumption\\
-  \end{itemize}
-\item
-  Can use alternative random distributions:
+  Variance \textgreater{} mean (over-dispersion)
 
   \begin{itemize}
   \tightlist
@@ -388,8 +368,14 @@ Exploratory plots
     Negative binomial distribution
   \end{itemize}
 \item
-  Can introduce zero-inflation
-\end{itemize}
+  Excess zeros (zero inflation)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Can introduce zero-inflation
+  \end{itemize}
+\end{enumerate}
 
 \end{frame}
 
@@ -470,9 +456,8 @@ probability of success p
 
 \end{frame}
 
-\begin{frame}[fragile]{Risky drug behavior: Negative Binomial
-Regression}
-\protect\hypertarget{risky-drug-behavior-negative-binomial-regression}{}
+\begin{frame}[fragile]{Negative Binomial Regression}
+\protect\hypertarget{negative-binomial-regression}{}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -604,23 +589,25 @@ set to zero by \emph{1.}
 
 \end{frame}
 
-\begin{frame}[fragile]{Risky drug behavior: Zero-inflated Poisson
-regression}
-\protect\hypertarget{risky-drug-behavior-zero-inflated-poisson-regression}{}
+\begin{frame}[fragile]{Zero-inflated Poisson regression}
+\protect\hypertarget{zero-inflated-poisson-regression}{}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(pscl)}
-\NormalTok{fit.ZIpois <-}\StringTok{ }\KeywordTok{zeroinfl}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }\NormalTok{homeless,}
-                       \DataTypeTok{dist =} \StringTok{"poisson"}\NormalTok{,}
-                       \DataTypeTok{data =}\NormalTok{ needledat2)}
+\NormalTok{fit.ZIpois <-}
+\StringTok{  }\NormalTok{pscl}\OperatorTok{::}\KeywordTok{zeroinfl}\NormalTok{(shared_syr}\OperatorTok{~}\NormalTok{sex}\OperatorTok{+}\NormalTok{ethn}\OperatorTok{+}\NormalTok{homeless,}
+                 \DataTypeTok{dist =} \StringTok{"poisson"}\NormalTok{,}
+                 \DataTypeTok{data =}\NormalTok{ needledat2)}
 \end{Highlighting}
 \end{Shaded}
 
 \end{frame}
 
-\begin{frame}[fragile]{Zero-inflated Poisson regression - the model}
-\protect\hypertarget{zero-inflated-poisson-regression---the-model}{}
+\begin{frame}[fragile]{}
+\protect\hypertarget{section-1}{}
+
+\tiny
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -631,7 +618,7 @@ regression}
 \begin{verbatim}
 ## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
 ##     dist = "poisson")
 ## 
 ## Pearson residuals:
@@ -662,13 +649,13 @@ regression}
 
 \end{frame}
 
-\begin{frame}[fragile]{Risky drug behavior: Zero-inflated Negative
-Binomial regression}
-\protect\hypertarget{risky-drug-behavior-zero-inflated-negative-binomial-regression}{}
+\begin{frame}[fragile]{Zero-inflated Negative Binomial regression}
+\protect\hypertarget{zero-inflated-negative-binomial-regression}{}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit.ZInegbin <-}\StringTok{ }\KeywordTok{zeroinfl}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }\NormalTok{homeless,}
+\NormalTok{fit.ZInegbin <-}\StringTok{ }
+\StringTok{  }\NormalTok{pscl}\OperatorTok{::}\KeywordTok{zeroinfl}\NormalTok{(shared_syr}\OperatorTok{~}\NormalTok{sex}\OperatorTok{+}\NormalTok{ethn}\OperatorTok{+}\NormalTok{homeless,}
                          \DataTypeTok{dist =} \StringTok{"negbin"}\NormalTok{,}
                          \DataTypeTok{data =}\NormalTok{ needledat2)}
 \end{Highlighting}
@@ -686,9 +673,8 @@ Binomial regression}
 
 \end{frame}
 
-\begin{frame}[fragile]{Zero-inflated Negative Binomial regression -
-model 1}
-\protect\hypertarget{zero-inflated-negative-binomial-regression---model-1}{}
+\begin{frame}[fragile]{}
+\protect\hypertarget{section-2}{}
 
 \tiny
 
@@ -701,7 +687,7 @@ model 1}
 \begin{verbatim}
 ## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
 ##     dist = "negbin")
 ## 
 ## Pearson residuals:
@@ -734,9 +720,8 @@ model 1}
 
 \end{frame}
 
-\begin{frame}[fragile]{Zero-inflated Negative Binomial regression -
-simplified ZI model}
-\protect\hypertarget{zero-inflated-negative-binomial-regression---simplified-zi-model}{}
+\begin{frame}[fragile]{Zero-inflated NB - simplified}
+\protect\hypertarget{zero-inflated-nb---simplified}{}
 
 \begin{itemize}
 \tightlist
@@ -749,7 +734,8 @@ simplified ZI model}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit.ZInb2 <-}\StringTok{ }\KeywordTok{zeroinfl}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }\NormalTok{homeless }\OperatorTok{+}\StringTok{ }\NormalTok{hiv }\OperatorTok{|}\StringTok{ }\NormalTok{hiv,}
+\NormalTok{fit.ZInb2 <-}\StringTok{ }\NormalTok{pscl}\OperatorTok{::}\KeywordTok{zeroinfl}\NormalTok{(shared_syr }\OperatorTok{~}\StringTok{ }\NormalTok{sex }\OperatorTok{+}\StringTok{ }\NormalTok{ethn }\OperatorTok{+}\StringTok{ }
+\StringTok{                        }\NormalTok{homeless }\OperatorTok{+}\StringTok{ }\NormalTok{hiv }\OperatorTok{|}\StringTok{ }\NormalTok{hiv,}
                       \DataTypeTok{dist =} \StringTok{"negbin"}\NormalTok{,}
                       \DataTypeTok{data =}\NormalTok{ needledat2)}
 \end{Highlighting}
@@ -757,9 +743,8 @@ simplified ZI model}
 
 \end{frame}
 
-\begin{frame}[fragile]{Zero-inflated Negative Binomial regression -
-model 2}
-\protect\hypertarget{zero-inflated-negative-binomial-regression---model-2}{}
+\begin{frame}[fragile]{}
+\protect\hypertarget{section-3}{}
 
 \tiny
 
@@ -772,8 +757,8 @@ model 2}
 \begin{verbatim}
 ## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, data = needledat2, 
-##     dist = "negbin")
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, 
+##     data = needledat2, dist = "negbin")
 ## 
 ## Pearson residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -805,15 +790,27 @@ model 2}
 
 \end{frame}
 
-\begin{frame}[fragile]{Intercept-only zero-inflation model}
-\protect\hypertarget{intercept-only-zero-inflation-model}{}
+\begin{frame}[fragile]{Intercept-only ZI model}
+\protect\hypertarget{intercept-only-zi-model}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit.ZInb3 <-}
+\StringTok{  }\NormalTok{pscl}\OperatorTok{::}\KeywordTok{zeroinfl}\NormalTok{(shared_syr}\OperatorTok{~}\NormalTok{sex}\OperatorTok{+}\NormalTok{ethn}\OperatorTok{+}\NormalTok{homeless}\OperatorTok{|}\DecValTok{1}\NormalTok{,}
+           \DataTypeTok{dist =} \StringTok{"negbin"}\NormalTok{,}
+           \DataTypeTok{data =}\NormalTok{ needledat2)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+\protect\hypertarget{section-4}{}
 
 \tiny
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit.ZInb3 <-}\StringTok{ }\KeywordTok{zeroinfl}\NormalTok{(shared_syr}\OperatorTok{~}\NormalTok{sex}\OperatorTok{+}\NormalTok{ethn}\OperatorTok{+}\NormalTok{homeless}\OperatorTok{|}\DecValTok{1}\NormalTok{, }
-                        \DataTypeTok{dist=}\StringTok{"negbin"}\NormalTok{, }\DataTypeTok{data=}\NormalTok{needledat2)}
 \KeywordTok{summary}\NormalTok{(fit.ZInb3)}
 \end{Highlighting}
 \end{Shaded}
@@ -821,7 +818,7 @@ model 2}
 \begin{verbatim}
 ## 
 ## Call:
-## zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, 
+## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, 
 ##     dist = "negbin")
 ## 
 ## Pearson residuals:
@@ -850,6 +847,30 @@ model 2}
 
 \end{frame}
 
+\begin{frame}[fragile]{Confidence intervals}
+\protect\hypertarget{confidence-intervals}{}
+
+Use the \texttt{confint()} function for all these models (don't try to
+specify which package confint comes from). E.g.:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{(fit.ZInb3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                         2.5 %    97.5 %
+## count_(Intercept)  -0.7108906 4.8817285
+## count_sexM         -3.1861592 0.3099794
+## count_ethnHispanic -1.8048349 2.7674386
+## count_ethnWhite    -1.6630517 1.5146931
+## count_homelessyes   0.2937565 2.9477701
+## zero_(Intercept)   -0.9685313 2.0106906
+\end{verbatim}
+
+\end{frame}
+
 \begin{frame}[fragile]{Residuals vs.~fitted values}
 \protect\hypertarget{residuals-vs.-fitted-values}{}
 
@@ -857,33 +878,15 @@ I invisibly define functions \texttt{plotpanel1} and \texttt{plotpanel2}
 that will work for all types of models (see lab). These use Pearson
 residuals.
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-21-1.pdf}
+\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-23-1.pdf}
 
 \end{frame}
 
 \begin{frame}{Quantile-quantile plots for residuals}
 \protect\hypertarget{quantile-quantile-plots-for-residuals}{}
 
-\includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-22-1.pdf}
-\emph{still} over-dispersed - ideas?
-
-\end{frame}
-
-\begin{frame}{Inference from the different models}
-\protect\hypertarget{inference-from-the-different-models}{}
-
-\tiny
-
-\% Error: Unrecognized object type. Zero-inflated models are 3) Poisson,
-4) Negative Binomial, and 5) Negative Binomial with intercept-only zero
-inflation model.
-
-\end{frame}
-
-\begin{frame}{Example of plotting observed and predicted counts}
-\protect\hypertarget{example-of-plotting-observed-and-predicted-counts}{}
-
 \includegraphics{../docs/articles/session_lecture_files/figure-beamer/unnamed-chunk-24-1.pdf}
+\emph{still} over-dispersed - ideas?
 
 \end{frame}
 
