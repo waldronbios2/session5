@@ -45,5 +45,3 @@
 4. Create residual deviance plots using the functions defined in the lecture.
 
 5. Plot the frequences of predicted and observed counts for each model.
-
-6. Try fitting the needle dataset using a zero-inflated gamma count distribution
