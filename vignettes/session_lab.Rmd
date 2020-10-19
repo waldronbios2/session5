@@ -1,5 +1,5 @@
 ---
-title: "Session 5 lab exercise: What it's about"
+title: "Session 5 lab exercise: loglinear regression part 2"
 author: "Levi Waldron"
 institute: "CUNY SPH Biostatistics 2"
 clean: false
@@ -16,10 +16,23 @@ always_allow_html: true
 
 **Learning objectives**
 
-1. Learning objective 1
+1. Fit Poisson, NB, and zero-inflated loglinear models
+2. Perform nested deviance test for model selection
+3. Make diagnostic plots of loglinear models
 
 **Exercises**
 
-1. Exercise 1
+1. Load the needle-sharing dataset. 
+    + Compare the mean to the variance of the outcome variable. 
+    + Calculate what fraction of the counts are zero.
+    + Create a histogram of the outcome variable.
 
+2. Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.
 
+3. Use chi-square nested deviance tests to assess which model seems to fit best.
+
+4. Create residual deviance plots using the functions defined in the lecture.
+
+5. Plot the frequences of predicted and observed counts for each model.
+
+6. Try fitting the needle dataset using a zero-inflated gamma count distribution
