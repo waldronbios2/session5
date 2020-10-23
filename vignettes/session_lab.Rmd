@@ -144,51 +144,53 @@ Or two degrees of freedom:
 qchisq(p=0.95, df = 2)  #critical value is 6
 ```
 
-All the differences in twice log-likelihood above are _much_ larger than these critical significance values, except for the difference between negative binomial and zero-inflated negative binomial models. 
+All the differences in double log-likelihoods above are _much_ larger (in the hundreds) than these critical significance values, except for the difference between Negative Binomial and zero-inflated negative binomial models. So it doesn't look like zero inflation helped the Negative Binomial distribution model, but it helped the Poisson model, and the Negative Binomial model fits better than the Poisson model.
 
 # Create residual deviance plots using the functions defined in the lecture.
 
-# Plot the frequences of predicted and observed counts for each model.
-
-```{r, echo=FALSE}
-observed <- data.frame(table(needledat2$shared_syr))
-fit.lm <- lm(shared_syr ~ sex + ethn + homeless, data = needledat2)
-pred.lm <- data.frame(table(round(predict(fit.lm))))
-pred.pois <-
-  data.frame(table(round(predict(fit.pois, type = "response"))))
-pred.negbin <-
-  data.frame(table(round(predict(fit.negbin, type = "response"))))
-pred.ZIpois <-
-  data.frame(table(round(predict(fit.ZIpois, type = "response"))))
-pred.ZInb3 <-
-  data.frame(table(round(predict(fit.ZInegbin, type = "response"))))
-
-plot(
-  as.numeric(observed[, 1]),
-  observed[, 2],
-  type = "l",
-  lwd = 2,
-  xlab = "Counts",
-  ylab = "Frequency"
-)
-lines(as.numeric(pred.pois[, 1]),
-      pred.pois[, 2],
-      lty = 2,
-      lwd = 2)
-lines(as.numeric(pred.negbin[, 1]),
-      pred.negbin[, 2],
-      lty = 3,
-      lwd = 2)
-lines(as.numeric(pred.ZInb3[, 1]),
-      pred.ZInb3[, 2],
-      lty = 4,
-      lwd = 2)
-legend(
-  "topright",
-  legend = c("Observed", "Poisson", "Negbin", "ZI negbin"),
-  lty = 1:4,
-  lwd = 2
-)
+These were the (base graphics) functions defined to create the first two panels of residuals plots for all of these types of models.
+```{r}
+plotpanel1 <- function(fit, ...) {
+  plot(
+    x = predict(fit),
+    y = residuals(fit, type = "pearson"),
+    xlab = "Predicted Values",
+    ylab = "Pearson Residuals",
+    ...
+  )
+  abline(h = 0, lty = 3)
+  lines(lowess(x = predict(fit), y = resid(fit, type = "pearson")),
+        col = "red")
+}
+plotpanel2 <- function(fit, ...) {
+  resids <- scale(residuals(fit, type = "pearson"))
+  qqnorm(resids, ylab = "Std Pearson resid.", ...)
+  qqline(resids)
+}
 ```
 
+Let's make these plots. As a shortcut, remember that list of models? I'm going to use an explicit `for` loop this time instead of `lapply` so that I can use the vector names as plot titles.
+
+Although we saw some evidence from the chi-square test that the Negative Binomial distribution fit better than the Poisson distribution (not surprising since these data are very over-dispersed), these diagnostic plots show the Negative Binomial distribution still does not fit well at all. I would take any interpretation of the coefficients of these models with plenty of skepticism. But this dataset is tricky and I'm not sure offhand of a good model to fit it.
+
+Note, the line `par(mfrow=c(1, 2))` only works for base graphics (not ggplot2), and creates a 1 row by 2 column plot panel. 
+
+```{r}
+par(mfrow=c(1, 2))
+for (i in seq_along(listofmodels)){
+  plotpanel1(listofmodels[[i]], main = names(listofmodels)[i])
+  plotpanel2(listofmodels[[i]], main = names(listofmodels)[i])
+}
+```
+
+# Plot predicted vs observed counts
+
+```{r}
+preds <- data.frame(observed = na.omit(pull(needledat2, shared_syr)),
+           lm = predict(fit.lm),
+           poisson = predict(fit.pois),
+           negbin = predict(fit.negbin),
+           ZIpois = predict(fit.ZIpois),
+           ZInegbin = predict(fit.ZInegbin))
+```
 
