@@ -183,13 +183,31 @@ for (i in seq_along(listofmodels)){
 }
 ```
 
-# Plot predicted vs observed counts
+# Plot predicted and observed counts
 
+Here is a tibble that we can use to make histograms, density plots, etc.
 ```{r}
-preds <- data.frame(observed = na.omit(pull(needledat2, shared_syr)),
+preds <- tibble(observed = na.omit(pull(needledat2, shared_syr)),
            poisson = predict(fit.pois),
            negbin = predict(fit.negbin),
            ZIpois = predict(fit.ZIpois),
            ZInegbin = predict(fit.ZInegbin))
 ```
 
+Just to help with pivoting, let's pivot this into long-format:
+```{r}
+preds.long <- pivot_longer(preds, everything())
+```
+
+What did this do?
+```{r}
+preds.long
+```
+
+```{r}
+ggplot(preds.long, aes(x=value)) +
+  facet_wrap(~name) +
+  geom_histogram(binwidth = 1)
+```
+
+We can see that none of the models come close to modeling the extreme observed counts of 30+. In reality, these might require a more complex mixture model: for example a mixture of zero-inflation plus two different count distributions, one with a much higher mean. This is beyond the scope of the course, but it is possible to fit more complex mixture models that could fit this dataset better. 
