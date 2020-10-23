@@ -21,12 +21,11 @@ always_allow_html: true
 3. Make diagnostic plots of loglinear models
 
 
-# Exercises: load the needle-sharing dataset. 
+# Load the needle-sharing dataset
 
-```{r loadandfilter, echo=FALSE, message=FALSE}
+```{r loadandfilter, message=FALSE}
 suppressPackageStartupMessages({
-  library(readr)
-  library(dplyr)
+  library(tidyverse)
 })
 needledat <- readr::read_csv("needle_sharing.csv")
 needledat2 <- needledat %>%
@@ -44,42 +43,64 @@ needledat2 <- needledat %>%
   )
 ```
 
-## Compare the mean to the variance of the outcome variable. 
+# Compare the mean to the variance of the outcome variable. Calculate what fraction of the counts are zero.
 
-## Calculate what fraction of the counts are zero.
+```{r}
+meanvarzeros <- needledat2 %>% 
+  filter(complete.cases(shared_syr)) %>%
+summarise(
+  mean = mean(shared_syr),
+  var = var(shared_syr),
+  fraczero = (sum(shared_syr == 0) / length(shared_syr))
+)
+meanvarzeros
+```
 
-## Create a histogram of the outcome variable.
+The mean number of needle sharing events per participant is `r signif(pull(meanvarzeros, mean), 3)`, the variance is `r signif(pull(meanvarzeros, var), 3)`, and the fraction of participants who never shared a needle is `r signif(pull(meanvarzeros, fraczero), 3)`. (Note how I put computed results in the text here rather than writing in numbers manually - they will change automatically if the analysis is changed!)
+
+# Create a histogram of the outcome variable.
+
+This was done in the lecture using base R, but let's do it here with ggplot2. Note the filtering of complete cases only is unnecessary because ggplot does it anyways, but this gets rid of a warning (try it without filtering). Specifying the binwidth is also unnecessary, but by default geom_histogram creates histogram bins of size 2 (ie 0 and 1 in the same bin, 2 and 3 together, ...)
+
+```{r}
+library(ggplot2)
+filter(needledat2, complete.cases(shared_syr)) %>%
+  ggplot(aes(x = shared_syr)) +
+  geom_histogram(binwidth = 1)
+```
+
 
 # Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.
 
-**Poisson**
+## Poisson
+
 ```{r}
 fit.pois <- glm(shared_syr ~ sex + ethn + homeless,
                 data = needledat2,
                 family = poisson(link = "log"))
 ```
 
-**Negative Binomial**
+## Negative Binomial
+
 ```{r}
 library(MASS)
-fit.negbin <- MASS::glm.nb(shared_syr ~ sex +
-                             ethn + homeless,
+fit.negbin <- MASS::glm.nb(shared_syr ~ sex + ethn + homeless,
                            data = needledat2)
 ```
 
-** Zero-inflated Poisson**
+## Zero-inflated Poisson
+
 ```{r}
 library(pscl)
-fit.ZIpois <- pscl::zeroinfl(shared_syr ~ sex +
-                         ethn + homeless,
+fit.ZIpois <- pscl::zeroinfl(shared_syr ~ sex + ethn + homeless | 1,
                        dist = "poisson",
                        data = needledat2)
 ```
 
-**Intercept-only ZI model**
+## Intercept-only ZI model
 
 ```{r}
-fit.ZInb3 <-
+fit.ZInegbin <-
   pscl::zeroinfl(shared_syr ~ sex + ethn + homeless | 1,
            dist = "negbin",
            data = needledat2)
@@ -87,11 +108,47 @@ fit.ZInb3 <-
 
 # Use chi-square nested deviance tests to assess which model seems to fit best.
 
+I want to calculate the log-likelihood from each model. The simplest way is to call the `logLik` function one at a time:
+
+```{r}
+logLik(fit.pois)
+logLik(fit.negbin)
+logLik(fit.ZIpois)
+logLik(fit.ZInegbin)
+```
+
+Just to demonstrate a fancier way that could be used on many models, I'll create a list of model objects:
+```{r}
+listofmodels <- list(
+  poisson = fit.pois,
+  negbin = fit.negbin,
+  ZIpois = fit.ZIpois,
+  ZInegbin = fit.ZInegbin
+)
+```
+
+Then demonstrate how the `lapply` (also related functions like `sapply`) can be used to implicitly loop over elements of a list, to do exactly the same thing:
+```{r}
+lapply(listofmodels, logLik)
+```
+
+OK now to actually answer the question. Just to get an idea of how big a difference in $-2 \times log(likelihood)$ would be statistically significant on one difference of degrees of freedom:
+
+```{r}
+qchisq(p=0.95, df = 1)  #critical value is 3.84
+qchisq(p=0.05, df = 1, lower.tail = FALSE) #equivalent
+```
+
+Or two degrees of freedom:
+```{r}
+qchisq(p=0.95, df = 2)  #critical value is 6
+```
+
+All the differences in twice log-likelihood above are _much_ larger than these critical significance values, except for the difference between negative binomial and zero-inflated negative binomial models. 
+
 # Create residual deviance plots using the functions defined in the lecture.
 
 # Plot the frequences of predicted and observed counts for each model.
-
-# Example of plotting observed and predicted counts
 
 ```{r, echo=FALSE}
 observed <- data.frame(table(needledat2$shared_syr))
@@ -104,7 +161,7 @@ pred.negbin <-
 pred.ZIpois <-
   data.frame(table(round(predict(fit.ZIpois, type = "response"))))
 pred.ZInb3 <-
-  data.frame(table(round(predict(fit.ZInb3, type = "response"))))
+  data.frame(table(round(predict(fit.ZInegbin, type = "response"))))
 
 plot(
   as.numeric(observed[, 1]),
@@ -133,4 +190,5 @@ legend(
   lwd = 2
 )
 ```
+
 
