@@ -261,16 +261,50 @@
 <div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">qchisq</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.95</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co">#critical value is 6</span></pre></div>
 <pre><code>## [1] 5.991465</code></pre>
-<p>All the differences in twice log-likelihood above are <em>much</em> larger than these critical significance values, except for the difference between negative binomial and zero-inflated negative binomial models.</p>
+<p>All the differences in double log-likelihoods above are <em>much</em> larger (in the hundreds) than these critical significance values, except for the difference between Negative Binomial and zero-inflated negative binomial models. So it doesn’t look like zero inflation helped the Negative Binomial distribution model, but it helped the Poisson model, and the Negative Binomial model fits better than the Poisson model.</p>
 </div>
 <div id="create-residual-deviance-plots-using-the-functions-defined-in-the-lecture-" class="section level1">
 <h1 class="hasAnchor">
 <a href="#create-residual-deviance-plots-using-the-functions-defined-in-the-lecture-" class="anchor"></a>Create residual deviance plots using the functions defined in the lecture.</h1>
+<p>These were the (base graphics) functions defined to create the first two panels of residuals plots for all of these types of models.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit">
+<span class="va">plotpanel1</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fit</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>
+    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>,
+    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span>,
+    xlab <span class="op">=</span> <span class="st">"Predicted Values"</span>,
+    ylab <span class="op">=</span> <span class="st">"Pearson Residuals"</span>,
+    <span class="va">...</span>
+  <span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lowess.html">lowess</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">resid</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span><span class="op">)</span>,
+        col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="va">plotpanel2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fit</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">resids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/qqnorm.html">qqnorm</a></span><span class="op">(</span><span class="va">resids</span>, ylab <span class="op">=</span> <span class="st">"Std Pearson resid."</span>, <span class="va">...</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/qqnorm.html">qqline</a></span><span class="op">(</span><span class="va">resids</span><span class="op">)</span>
+<span class="op">}</span></pre></div>
+<p>Let’s make these plots. As a shortcut, remember that list of models? I’m going to use an explicit <code>for</code> loop this time instead of <code>lapply</code> so that I can use the vector names as plot titles.</p>
+<p>Although we saw some evidence from the chi-square test that the Negative Binomial distribution fit better than the Poisson distribution (not surprising since these data are very over-dispersed), these diagnostic plots show the Negative Binomial distribution still does not fit well at all. I would take any interpretation of the coefficients of these models with plenty of skepticism. But this dataset is tricky and I’m not sure offhand of a good model to fit it.</p>
+<p>Note, the line <code><a href="https://rdrr.io/r/graphics/par.html">par(mfrow=c(1, 2))</a></code> only works for base graphics (not ggplot2), and creates a 1 row by 2 column plot panel.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">listofmodels</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu">plotpanel1</span><span class="op">(</span><span class="va">listofmodels</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">listofmodels</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
+  <span class="fu">plotpanel2</span><span class="op">(</span><span class="va">listofmodels</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">listofmodels</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span></pre></div>
+<p><img src="session_lab_files/figure-html/unnamed-chunk-13-1.png" width="700"><img src="session_lab_files/figure-html/unnamed-chunk-13-2.png" width="700"><img src="session_lab_files/figure-html/unnamed-chunk-13-3.png" width="700"><img src="session_lab_files/figure-html/unnamed-chunk-13-4.png" width="700"></p>
 </div>
-<div id="plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="section level1">
+<div id="plot-predicted-vs-observed-counts" class="section level1">
 <h1 class="hasAnchor">
-<a href="#plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="anchor"></a>Plot the frequences of predicted and observed counts for each model.</h1>
-<p><img src="session_lab_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<a href="#plot-predicted-vs-observed-counts" class="anchor"></a>Plot predicted vs observed counts</h1>
+<div class="sourceCode" id="cb33"><pre class="downlit">
+<span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>observed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="fu">pull</span><span class="op">(</span><span class="va">needledat2</span>, <span class="va">shared_syr</span><span class="op">)</span><span class="op">)</span>,
+           poisson <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit.pois</span><span class="op">)</span>,
+           negbin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span>,
+           ZIpois <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit.ZIpois</span><span class="op">)</span>,
+           ZInegbin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit.ZInegbin</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
   </div>
 
