@@ -110,44 +110,86 @@
 <li>Make diagnostic plots of loglinear models</li>
 </ol>
 </div>
-<div id="exercises-load-the-needle-sharing-dataset-" class="section level1">
+<div id="load-the-needle-sharing-dataset" class="section level1">
 <h1 class="hasAnchor">
-<a href="#exercises-load-the-needle-sharing-dataset-" class="anchor"></a>Exercises: load the needle-sharing dataset.</h1>
-<div id="compare-the-mean-to-the-variance-of-the-outcome-variable-" class="section level2">
-<h2 class="hasAnchor">
-<a href="#compare-the-mean-to-the-variance-of-the-outcome-variable-" class="anchor"></a>Compare the mean to the variance of the outcome variable.</h2>
+<a href="#load-the-needle-sharing-dataset" class="anchor"></a>Load the needle-sharing dataset</h1>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="va">needledat</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"needle_sharing.csv"</span><span class="op">)</span>
+<span class="va">needledat2</span> <span class="op">&lt;-</span> <span class="va">needledat</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"M"</span>, <span class="st">"F"</span><span class="op">)</span> <span class="op">&amp;</span>
+                  <span class="va">ethn</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"White"</span>, <span class="st">"AA"</span>, <span class="st">"Hispanic"</span><span class="op">)</span> <span class="op">&amp;</span>
+                  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">homeless</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    homeless <span class="op">=</span> <span class="fu">recode</span><span class="op">(</span><span class="va">homeless</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"no"</span>, <span class="st">"1"</span> <span class="op">=</span> <span class="st">"yes"</span><span class="op">)</span>,
+    hiv <span class="op">=</span> <span class="fu">recode</span><span class="op">(</span>
+      <span class="va">hivstat</span>,
+      <span class="st">"0"</span> <span class="op">=</span> <span class="st">"negative"</span>,
+      <span class="st">"1"</span> <span class="op">=</span> <span class="st">"positive"</span>,
+      <span class="st">"2"</span> <span class="op">=</span> <span class="st">"yes"</span>
+    <span class="op">)</span>
+  <span class="op">)</span></pre></div>
 </div>
-<div id="calculate-what-fraction-of-the-counts-are-zero-" class="section level2">
-<h2 class="hasAnchor">
-<a href="#calculate-what-fraction-of-the-counts-are-zero-" class="anchor"></a>Calculate what fraction of the counts are zero.</h2>
+<div id="compare-the-mean-to-the-variance-of-the-outcome-variable--calculate-what-fraction-of-the-counts-are-zero-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#compare-the-mean-to-the-variance-of-the-outcome-variable--calculate-what-fraction-of-the-counts-are-zero-" class="anchor"></a>Compare the mean to the variance of the outcome variable. Calculate what fraction of the counts are zero.</h1>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="va">meanvarzeros</span> <span class="op">&lt;-</span> <span class="va">needledat2</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="fu">summarise</span><span class="op">(</span>
+  mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">)</span>,
+  var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">var</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">)</span>,
+  fraczero <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="va">meanvarzeros</span></pre></div>
+<pre><code>## # A tibble: 1 x 3
+##    mean   var fraczero
+##   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+## 1  3.12  113.    0.774</code></pre>
+<p>The mean number of needle sharing events per participant is 3.12, the variance is 113, and the fraction of participants who never shared a needle is 0.774. (Note how I put computed results in the text here rather than writing in numbers manually - they will change automatically if the analysis is changed!)</p>
 </div>
-<div id="create-a-histogram-of-the-outcome-variable-" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-histogram-of-the-outcome-variable-" class="anchor"></a>Create a histogram of the outcome variable.</h2>
-</div>
+<div id="create-a-histogram-of-the-outcome-variable-" class="section level1">
+<h1 class="hasAnchor">
+<a href="#create-a-histogram-of-the-outcome-variable-" class="anchor"></a>Create a histogram of the outcome variable.</h1>
+<p>This was done in the lecture using base R, but let’s do it here with ggplot2. Note the filtering of complete cases only is unnecessary because ggplot does it anyways, but this gets rid of a warning (try it without filtering). Specifying the binwidth is also unnecessary, but by default geom_histogram creates histogram bins of size 2 (ie 0 and 1 in the same bin, 2 and 3 together, …)</p>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">needledat2</span>, <span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">shared_syr</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></pre></div>
+<p><img src="session_lab_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 </div>
 <div id="fit-poisson-and-negative-binomial-models-as-in-the-lecture-with-and-without-zero-inflation-" class="section level1">
 <h1 class="hasAnchor">
 <a href="#fit-poisson-and-negative-binomial-models-as-in-the-lecture-with-and-without-zero-inflation-" class="anchor"></a>Fit Poisson and Negative Binomial models as in the lecture, with and without zero inflation.</h1>
-<p><strong>Poisson</strong></p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
+<div id="poisson" class="section level2">
+<h2 class="hasAnchor">
+<a href="#poisson" class="anchor"></a>Poisson</h2>
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="va">fit.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
                 data <span class="op">=</span> <span class="va">needledat2</span>,
                 family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></pre></div>
-<p><strong>Negative Binomial</strong></p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
+</div>
+<div id="negative-binomial" class="section level2">
+<h2 class="hasAnchor">
+<a href="#negative-binomial" class="anchor"></a>Negative Binomial</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/">MASS</a></span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Attaching package: 'MASS'</code></pre>
 <pre><code>## The following object is masked from 'package:dplyr':
 ## 
 ##     select</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
-                             <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
                            data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
-<p>** Zero-inflated Poisson**</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+</div>
+<div id="zero-inflated-poisson" class="section level2">
+<h2 class="hasAnchor">
+<a href="#zero-inflated-poisson" class="anchor"></a>Zero-inflated Poisson</h2>
+<div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/atahk/pscl">pscl</a></span><span class="op">)</span></pre></div>
 <pre><code>## Classes and Methods for R developed in the
 ## Political Science Computational Laboratory
@@ -155,21 +197,71 @@
 ## Stanford University
 ## Simon Jackman
 ## hurdle and zeroinfl functions by Achim Zeileis</code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
-                         <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span> <span class="op">|</span> <span class="fl">1</span>,
                        dist <span class="op">=</span> <span class="st">"poisson"</span>,
                        data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
-<p><strong>Intercept-only ZI model</strong></p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="va">fit.ZInb3</span> <span class="op">&lt;-</span>
+</div>
+<div id="intercept-only-zi-model" class="section level2">
+<h2 class="hasAnchor">
+<a href="#intercept-only-zi-model" class="anchor"></a>Intercept-only ZI model</h2>
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="va">fit.ZInegbin</span> <span class="op">&lt;-</span>
   <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span> <span class="op">|</span> <span class="fl">1</span>,
            dist <span class="op">=</span> <span class="st">"negbin"</span>,
            data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
 </div>
+</div>
 <div id="use-chi-square-nested-deviance-tests-to-assess-which-model-seems-to-fit-best-" class="section level1">
 <h1 class="hasAnchor">
 <a href="#use-chi-square-nested-deviance-tests-to-assess-which-model-seems-to-fit-best-" class="anchor"></a>Use chi-square nested deviance tests to assess which model seems to fit best.</h1>
+<p>I want to calculate the log-likelihood from each model. The simplest way is to call the <code>logLik</code> function one at a time:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.pois</span><span class="op">)</span></pre></div>
+<pre><code>## 'log Lik.' -730.0133 (df=5)</code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span></pre></div>
+<pre><code>## 'log Lik.' -147.1277 (df=6)</code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.ZIpois</span><span class="op">)</span></pre></div>
+<pre><code>## 'log Lik.' -303.0276 (df=6)</code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.ZInegbin</span><span class="op">)</span></pre></div>
+<pre><code>## 'log Lik.' -146.7677 (df=7)</code></pre>
+<p>Just to demonstrate a fancier way that could be used on many models, I’ll create a list of model objects:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="va">listofmodels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  poisson <span class="op">=</span> <span class="va">fit.pois</span>,
+  negbin <span class="op">=</span> <span class="va">fit.negbin</span>,
+  ZIpois <span class="op">=</span> <span class="va">fit.ZIpois</span>,
+  ZInegbin <span class="op">=</span> <span class="va">fit.ZInegbin</span>
+<span class="op">)</span></pre></div>
+<p>Then demonstrate how the <code>lapply</code> (also related functions like <code>sapply</code>) can be used to implicitly loop over elements of a list, to do exactly the same thing:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">listofmodels</span>, <span class="va">logLik</span><span class="op">)</span></pre></div>
+<pre><code>## $poisson
+## 'log Lik.' -730.0133 (df=5)
+## 
+## $negbin
+## 'log Lik.' -147.1277 (df=6)
+## 
+## $ZIpois
+## 'log Lik.' -303.0276 (df=6)
+## 
+## $ZInegbin
+## 'log Lik.' -146.7677 (df=7)</code></pre>
+<p>OK now to actually answer the question. Just to get an idea of how big a difference in <span class="math inline">\(-2 \times log(likelihood)\)</span> would be statistically significant on one difference of degrees of freedom:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">qchisq</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.95</span>, df <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co">#critical value is 3.84</span></pre></div>
+<pre><code>## [1] 3.841459</code></pre>
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">qchisq</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.05</span>, df <span class="op">=</span> <span class="fl">1</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co">#equivalent</span></pre></div>
+<pre><code>## [1] 3.841459</code></pre>
+<p>Or two degrees of freedom:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">qchisq</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.95</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co">#critical value is 6</span></pre></div>
+<pre><code>## [1] 5.991465</code></pre>
+<p>All the differences in twice log-likelihood above are <em>much</em> larger than these critical significance values, except for the difference between negative binomial and zero-inflated negative binomial models.</p>
 </div>
 <div id="create-residual-deviance-plots-using-the-functions-defined-in-the-lecture-" class="section level1">
 <h1 class="hasAnchor">
@@ -178,11 +270,7 @@
 <div id="plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plot-the-frequences-of-predicted-and-observed-counts-for-each-model-" class="anchor"></a>Plot the frequences of predicted and observed counts for each model.</h1>
-</div>
-<div id="example-of-plotting-observed-and-predicted-counts" class="section level1">
-<h1 class="hasAnchor">
-<a href="#example-of-plotting-observed-and-predicted-counts" class="anchor"></a>Example of plotting observed and predicted counts</h1>
-<p><img src="session_lab_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="session_lab_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
   </div>
 
