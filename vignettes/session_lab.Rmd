@@ -187,7 +187,6 @@ for (i in seq_along(listofmodels)){
 
 ```{r}
 preds <- data.frame(observed = na.omit(pull(needledat2, shared_syr)),
-           lm = predict(fit.lm),
            poisson = predict(fit.pois),
            negbin = predict(fit.negbin),
            ZIpois = predict(fit.ZIpois),
