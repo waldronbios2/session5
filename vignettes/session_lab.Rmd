@@ -187,7 +187,7 @@ for (i in seq_along(listofmodels)){
 
 Here is a tibble that we can use to make histograms, density plots, etc.
 ```{r}
-preds <- tibble(observed = na.omit(pull(needledat2, shared_syr)),
+preds <- tibble(observed = fit.pois$y,
            poisson = predict(fit.pois),
            negbin = predict(fit.negbin),
            ZIpois = predict(fit.ZIpois),
