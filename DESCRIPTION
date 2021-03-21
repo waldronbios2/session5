@@ -11,6 +11,7 @@ Imports:
     gamlss,
     pscl,
     stargazer,
+    pheatmap,
     tidyverse
 Suggests:
     pkgdown,
