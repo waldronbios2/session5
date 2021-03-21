@@ -123,13 +123,23 @@ ggplot(needledat2, aes(x = ethn, y = shared_syr)) +
 
 # Assess whether there may be multicollinearity among the predictors
 
+This uses `model.matrix` as a trick to produce a numeric matrix containing numeric and dummy variables, that can be used for calculating correlations and plotting heatmaps or dendrograms. First, assessing only three variables. Note, the first column of `mm` is the intercept, which must be removed. 
+
 ```{r}
 mm <- model.matrix(~ sex + ethn + homeless, data = needledat2)
 plot(hclust(as.dist(1 - cor(mm[, -1]))))
+```
+
+Now embed the dendrogram in a heatmap, which may be more or less informative, but worth trying. Here I use Euclidian distance for rows (patients) because some rows have zero variance and produce an error when attempting to calculate correlation, but use Pearson correlation for columns. The choice of distance metric makes this clustering look very different. See `?pheatmap` for other distance metric options. There are also other heatmap packages, but `?pheatmap` makes it easy to produce a basic heatmap.
+
+```{r}
 library(pheatmap)
 pheatmap(mm[, -1],
          clustering_distance_cols = "correlation",
-         clustering_distance_rows = "correlation")```
+         clustering_distance_rows = "euclidean")
+```
+
+Now repeat but assessing all variables, removing `id` because it's just an identifier, and `shsyryn` because it has zero variance.
 
 ```{r}
 mm <- model.matrix(~ . - id - shsyryn, data = needledat2)[, -1] #[, -1] gets rid of intercept
