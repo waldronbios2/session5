@@ -221,7 +221,7 @@ Although we saw some evidence from the chi-square test that the Negative Binomia
 Note, the line `par(mfrow=c(1, 2))` only works for base graphics (not ggplot2), and creates a 1 row by 2 column plot panel. 
 
 ```{r}
-par(mfrow=c(4, 2))
+par(mfrow=c(1, 2))
 for (i in seq_along(listoffits)){
   plotpanel1(listoffits[[i]], main = names(listoffits)[i])
   plotpanel2(listoffits[[i]], main = names(listoffits)[i])
