@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,14 +39,14 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">session5</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Lecture and Lab
      
     <span class="caret"></span>
@@ -57,23 +59,23 @@
       <a href="../articles/session_lecture.pdf">Lecture notes PDF</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="../articles/session_lab.html">Lab materials</a>
     </li>
   </ul>
 </li>
-<li class="dropdown-header">
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/waldronbios2/session5/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/waldronbios2/session5/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="https://twitter.com/leviwaldron1">
-    <span class="fab fa fab fa-twitter fa-lg"></span>
+  <a href="https://twitter.com/leviwaldron1" class="external-link">
+    <span class="fab fa-twitter fa-lg"></span>
      
   </a>
 </li>
@@ -87,36 +89,39 @@
 
       
 
-      </header><script src="session_lecture_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Session 5: loglinear regression part 2</h1>
-                        <h4 class="author">Levi Waldron</h4>
+                        <h4 data-toc-skip class="author">Levi
+Waldron</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/waldronbios2/session5/blob/master/vignettes/session_lecture.Rmd"><code>vignettes/session_lecture.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/waldronbios2/session5/blob/HEAD/vignettes/session_lecture.Rmd" class="external-link"><code>vignettes/session_lecture.Rmd</code></a></small>
       <div class="hidden name"><code>session_lecture.Rmd</code></div>
 
     </div>
 
     
     
-<div id="learning-objectives-and-outline" class="section level1">
-<h1 class="hasAnchor">
-<a href="#learning-objectives-and-outline" class="anchor"></a>Learning objectives and outline</h1>
-<div id="learning-objectives" class="section level2">
-<h2 class="hasAnchor">
-<a href="#learning-objectives" class="anchor"></a>Learning objectives</h2>
+<div class="section level2">
+<h2 id="learning-objectives-and-outline">Learning objectives and outline<a class="anchor" aria-label="anchor" href="#learning-objectives-and-outline"></a>
+</h2>
+<div class="section level3">
+<h3 id="learning-objectives">Learning objectives<a class="anchor" aria-label="anchor" href="#learning-objectives"></a>
+</h3>
 <ol style="list-style-type: decimal">
 <li>Define and identify over-dispersion in count data</li>
-<li>Define the negative binomial (NB) distribution and identify applications for it</li>
+<li>Define the negative binomial (NB) distribution and identify
+applications for it</li>
 <li>Define zero-inflated count models</li>
-<li>Fit and interpret Poisson and NB, with and without zero inflation</li>
+<li>Fit and interpret Poisson and NB, with and without zero
+inflation</li>
 </ol>
 </div>
-<div id="outline" class="section level2">
-<h2 class="hasAnchor">
-<a href="#outline" class="anchor"></a>Outline</h2>
+<div class="section level3">
+<h3 id="outline">Outline<a class="anchor" aria-label="anchor" href="#outline"></a>
+</h3>
 <ol style="list-style-type: decimal">
 <li>Review of log-linear Poisson glm</li>
 <li>Review of diagnostics and interpretation of coefficients</li>
@@ -132,107 +137,124 @@
 <li>Vittinghoff section 8.1-8.3</li>
 <li>Short tutorials on regression in R (and Stata, SAS, SPSS, Mplus)
 <ul>
-<li><a href="https://stats.idre.ucla.edu/other/dae/" class="uri">https://stats.idre.ucla.edu/other/dae/</a></li>
+<li><a href="https://stats.idre.ucla.edu/other/dae/" class="external-link uri">https://stats.idre.ucla.edu/other/dae/</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="review" class="section level1">
-<h1 class="hasAnchor">
-<a href="#review" class="anchor"></a>Review</h1>
-<div id="components-of-glm" class="section level2">
-<h2 class="hasAnchor">
-<a href="#components-of-glm" class="anchor"></a>Components of GLM</h2>
+<div class="section level2">
+<h2 id="review">Review<a class="anchor" aria-label="anchor" href="#review"></a>
+</h2>
+<div class="section level3">
+<h3 id="components-of-glm">Components of GLM<a class="anchor" aria-label="anchor" href="#components-of-glm"></a>
+</h3>
 <ul>
 <li>
-<strong>Random component</strong> specifies the conditional distribution for the response variable - it doesn’t have to be normal but can be any distribution that belongs to the “exponential” family of distributions</li>
+<strong>Random component</strong> specifies the conditional
+distribution for the response variable - it doesn’t have to be normal
+but can be any distribution that belongs to the “exponential” family of
+distributions</li>
 <li>
-<strong>Systematic component</strong> specifies linear function of predictors (linear predictor)</li>
+<strong>Systematic component</strong> specifies linear function of
+predictors (linear predictor)</li>
 <li>
-<strong>Link</strong> [denoted by g(.)] specifies the relationship between the expected value of the random component and the systematic component, can be linear or nonlinear</li>
+<strong>Link</strong> [denoted by g(.)] specifies the relationship
+between the expected value of the random component and the systematic
+component, can be linear or nonlinear</li>
 </ul>
 </div>
-<div id="motivating-example-choice-of-distribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#motivating-example-choice-of-distribution" class="anchor"></a>Motivating example: Choice of Distribution</h2>
+<div class="section level3">
+<h3 id="motivating-example-choice-of-distribution">Motivating example: Choice of Distribution<a class="anchor" aria-label="anchor" href="#motivating-example-choice-of-distribution"></a>
+</h3>
 <ul>
 <li>Count data are often modeled as Poisson distributed:
 <ul>
-<li>mean <span class="math inline">\(\lambda\)</span> is greater than 0</li>
+<li>mean <span class="math inline">\(\lambda\)</span> is greater than
+0</li>
 <li>variance is also <span class="math inline">\(\lambda\)</span>
 </li>
-<li>Probability density <span class="math inline">\(P(k, \lambda) = \frac{\lambda^k}{k!} e^{-\lambda}\)</span>
+<li>Probability density <span class="math inline">\(P(k, \lambda) =
+\frac{\lambda^k}{k!} e^{-\lambda}\)</span>
 </li>
 </ul>
 </li>
 </ul>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-1-1.png" width="700"></p>
 </div>
-<div id="poisson-model-the-glm" class="section level2">
-<h2 class="hasAnchor">
-<a href="#poisson-model-the-glm" class="anchor"></a>Poisson model: the GLM</h2>
+<div class="section level3">
+<h3 id="poisson-model-the-glm">Poisson model: the GLM<a class="anchor" aria-label="anchor" href="#poisson-model-the-glm"></a>
+</h3>
 <p>The <strong>systematic part</strong> of the GLM is: <span class="math display">\[
-log(\lambda_i) = \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2 \textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
+log(\lambda_i) = \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2
+\textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
 \]</span> Or alternatively: <span class="math display">\[
-\lambda_i = exp \left( \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2 \textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i \right)
+\lambda_i = exp \left( \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2
+\textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
+\right)
 \]</span></p>
-<p>The <strong>random part</strong> is (Recall the <span class="math inline">\(\lambda_i\)</span> is both the mean and variance of a Poisson distribution): <span class="math display">\[
+<p>The <strong>random part</strong> is (Recall the <span class="math inline">\(\lambda_i\)</span> is both the mean and variance
+of a Poisson distribution): <span class="math display">\[
 y_i \sim Poisson(\lambda_i)
 \]</span></p>
 </div>
-<div id="example-risky-drug-use-behavior" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-risky-drug-use-behavior" class="anchor"></a>Example: Risky Drug Use Behavior</h2>
+<div class="section level3">
+<h3 id="example-risky-drug-use-behavior">Example: Risky Drug Use Behavior<a class="anchor" aria-label="anchor" href="#example-risky-drug-use-behavior"></a>
+</h3>
 <ul>
-<li>Outcome is # times the drug user shared a syringe in the past month (<code>shared_syr</code>)</li>
-<li>Predictors: <code>sex</code>, <code>ethn</code>, <code>homeless</code>
+<li>Outcome is # times the drug user shared a syringe in the past month
+(<code>shared_syr</code>)</li>
+<li>Predictors: <code>sex</code>, <code>ethn</code>,
+<code>homeless</code>
 <ul>
-<li>filtered to <code>sex</code> “M” or “F”, <code>ethn</code> “White”, “AA”, “Hispanic”</li>
+<li>filtered to <code>sex</code> “M” or “F”, <code>ethn</code> “White”,
+“AA”, “Hispanic”</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">needledat2</span><span class="op">$</span><span class="va">shared_syr</span><span class="op">)</span></pre></div>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##   0.000   0.000   0.000   3.122   0.000  60.000       2</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.html">var</a></span><span class="op">(</span><span class="va">needledat2</span><span class="op">$</span><span class="va">shared_syr</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
-<pre><code>## [1] 113.371</code></pre>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">needledat2</span><span class="op">$</span><span class="va">shared_syr</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span></span>
+<span><span class="co">##   0.000   0.000   0.000   3.122   0.000  60.000       2</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">needledat2</span><span class="op">$</span><span class="va">shared_syr</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 113.371</span></span></code></pre>
 </div>
-<div id="example-risky-drug-use-behavior-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-risky-drug-use-behavior-1" class="anchor"></a>Example: Risky Drug Use Behavior</h2>
+<div class="section level3">
+<h3 id="example-risky-drug-use-behavior-1">Example: Risky Drug Use Behavior<a class="anchor" aria-label="anchor" href="#example-risky-drug-use-behavior-1"></a>
+</h3>
 <p>Exploratory plots</p>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <ul>
-<li>There are a <em>lot</em> of zeros and variance is much greater than mean
+<li>There are a <em>lot</em> of zeros and variance is much greater than
+mean
 <ul>
 <li>Poisson model is probably not a good fit</li>
 </ul>
 </li>
 </ul>
 </div>
-<div id="fitting-a-poisson-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fitting-a-poisson-model" class="anchor"></a>Fitting a Poisson model</h2>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">fit.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
-                data <span class="op">=</span> <span class="va">needledat2</span>,
-                family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="section level3">
+<h3 id="fitting-a-poisson-model">Fitting a Poisson model<a class="anchor" aria-label="anchor" href="#fitting-a-poisson-model"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,</span>
+<span>                data <span class="op">=</span> <span class="va">needledat2</span>,</span>
+<span>                family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="residuals-plots" class="section level2">
-<h2 class="hasAnchor">
-<a href="#residuals-plots" class="anchor"></a>Residuals plots</h2>
-<p><img src="session_lecture_files/figure-html/unnamed-chunk-5-1.png" width="700"> * Poisson model is definitely not a good fit.</p>
+<div class="section level3">
+<h3 id="residuals-plots">Residuals plots<a class="anchor" aria-label="anchor" href="#residuals-plots"></a>
+</h3>
+<p><img src="session_lecture_files/figure-html/unnamed-chunk-5-1.png" width="700">
+* Poisson model is definitely not a good fit.</p>
 </div>
 </div>
-<div id="over-dispersion" class="section level1">
-<h1 class="hasAnchor">
-<a href="#over-dispersion" class="anchor"></a>Over-dispersion</h1>
-<div id="when-the-poisson-model-doesnt-fit" class="section level2">
-<h2 class="hasAnchor">
-<a href="#when-the-poisson-model-doesnt-fit" class="anchor"></a>When the Poisson model doesn’t fit</h2>
+<div class="section level2">
+<h2 id="over-dispersion">Over-dispersion<a class="anchor" aria-label="anchor" href="#over-dispersion"></a>
+</h2>
+<div class="section level3">
+<h3 id="when-the-poisson-model-doesnt-fit">When the Poisson model doesn’t fit<a class="anchor" aria-label="anchor" href="#when-the-poisson-model-doesnt-fit"></a>
+</h3>
 <ol style="list-style-type: decimal">
 <li>Variance &gt; mean (over-dispersion)
 <ul>
@@ -246,359 +268,375 @@ y_i \sim Poisson(\lambda_i)
 </li>
 </ol>
 </div>
-<div id="negative-binomial-distribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#negative-binomial-distribution" class="anchor"></a>Negative binomial distribution</h2>
+<div class="section level3">
+<h3 id="negative-binomial-distribution">Negative binomial distribution<a class="anchor" aria-label="anchor" href="#negative-binomial-distribution"></a>
+</h3>
 <ul>
 <li>The binomial distribution is the number of successes in n trials:
 <ul>
 <li>Roll a die ten times, how many times do you see a 6?</li>
 </ul>
 </li>
-<li>The negative binomial distribution is the number of successes it takes to observe r failures:
+<li>The negative binomial distribution is the number of successes it
+takes to observe r failures:
 <ul>
-<li>How many times do you have to roll the die to see a 6 ten times?</li>
+<li>How many times do you have to roll the die to see a 6 ten
+times?</li>
 <li>Note that the number of rolls is no longer fixed.</li>
 <li>In this example, p=5/6 and a 6 is a “failure”</li>
 </ul>
 </li>
 </ul>
 </div>
-<div id="negative-binomial-glm" class="section level2">
-<h2 class="hasAnchor">
-<a href="#negative-binomial-glm" class="anchor"></a>Negative binomial GLM</h2>
-<p><em>One way</em> to parametrize a NB model is with a <strong>systematic part</strong> equivalent to the Poisson model: <span class="math display">\[
-log(\lambda_i) = \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2 \textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
+<div class="section level3">
+<h3 id="negative-binomial-glm">Negative binomial GLM<a class="anchor" aria-label="anchor" href="#negative-binomial-glm"></a>
+</h3>
+<p><em>One way</em> to parametrize a NB model is with a
+<strong>systematic part</strong> equivalent to the Poisson model: <span class="math display">\[
+log(\lambda_i) = \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2
+\textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
 \]</span> Or: <span class="math display">\[
-\lambda_i = exp \left( \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2 \textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i \right)
+\lambda_i = exp \left( \beta_0 + \beta_1 \textrm{RACE}_i + \beta_2
+\textrm{TRT}_i + \beta_3 \textrm{ALCH}_i + \beta_4 \textrm{DRUG}_i
+\right)
 \]</span></p>
 <p>And a <strong>random part</strong>: <span class="math display">\[
 y_i \sim NB(\lambda_i, \theta)
 \]</span></p>
 <ul>
 <li>
-<span class="math inline">\(\theta\)</span> is a <strong>dispersion parameter</strong> that is estimated</li>
-<li>When <span class="math inline">\(\theta = 0\)</span> it is equivalent to Poisson model</li>
+<span class="math inline">\(\theta\)</span> is a <strong>dispersion
+parameter</strong> that is estimated</li>
+<li>When <span class="math inline">\(\theta = 0\)</span> it is
+equivalent to Poisson model</li>
 <li>
-<code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">MASS::glm.nb()</a></code> uses this parametrization, <code><a href="https://rdrr.io/r/stats/NegBinomial.html">dnbinom()</a></code> does not</li>
-<li>The Poisson model can be considered <strong>nested</strong> within the Negative Binomial model</li>
+<code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> uses this parametrization,
+<code><a href="https://rdrr.io/r/stats/NegBinomial.html" class="external-link">dnbinom()</a></code> does not</li>
+<li>The Poisson model can be considered <strong>nested</strong> within
+the Negative Binomial model</li>
 </ul>
 </div>
-<div id="negative-binomial-random-distribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#negative-binomial-random-distribution" class="anchor"></a>Negative Binomial Random Distribution</h2>
+<div class="section level3">
+<h3 id="negative-binomial-random-distribution">Negative Binomial Random Distribution<a class="anchor" aria-label="anchor" href="#negative-binomial-random-distribution"></a>
+</h3>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
-<div id="compare-poisson-vs--negative-binomial" class="section level2">
-<h2 class="hasAnchor">
-<a href="#compare-poisson-vs--negative-binomial" class="anchor"></a>Compare Poisson vs. Negative Binomial</h2>
-<p>Negative Binomial Distribution has two parameters: # of trials n, and probability of success p</p>
+<div class="section level3">
+<h3 id="compare-poisson-vs--negative-binomial">Compare Poisson vs. Negative Binomial<a class="anchor" aria-label="anchor" href="#compare-poisson-vs--negative-binomial"></a>
+</h3>
+<p>Negative Binomial Distribution has two parameters: # of trials n, and
+probability of success p</p>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
-<div id="negative-binomial-regression" class="section level2">
-<h2 class="hasAnchor">
-<a href="#negative-binomial-regression" class="anchor"></a>Negative Binomial Regression</h2>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/">MASS</a></span><span class="op">)</span>
-<span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span>
-                             <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,
-                           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<div class="section level3">
+<h3 id="negative-binomial-regression">Negative Binomial Regression<a class="anchor" aria-label="anchor" href="#negative-binomial-regression"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span>
+<span><span class="va">fit.negbin</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">glm.nb</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span></span>
+<span>                             <span class="va">ethn</span> <span class="op">+</span> <span class="va">homeless</span>,</span>
+<span>                           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="section" class="section level2">
-<h2></h2>
-
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span></pre></div>
-<pre><code>## 
-## Call:
-## MASS::glm.nb(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
-##     init.theta = 0.07743871374, link = log)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8801  -0.7787  -0.6895  -0.5748   1.5675  
-## 
-## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)    0.4641     0.8559   0.542   0.5876  
-## sexM          -1.0148     0.8294  -1.224   0.2211  
-## ethnHispanic   1.3424     1.3201   1.017   0.3092  
-## ethnWhite      0.2429     0.7765   0.313   0.7544  
-## homelessyes    1.6445     0.7073   2.325   0.0201 *
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for Negative Binomial(0.0774) family taken to be 1)
-## 
-##     Null deviance: 62.365  on 114  degrees of freedom
-## Residual deviance: 56.232  on 110  degrees of freedom
-##   (2 observations deleted due to missingness)
-## AIC: 306.26
-## 
-## Number of Fisher Scoring iterations: 1
-## 
-## 
-##               Theta:  0.0774 
-##           Std. Err.:  0.0184 
-## 
-##  2 x log-likelihood:  -294.2550</code></pre>
+<div class="section level3">
+<h3 id="section"></h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## MASS::glm.nb(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, </span></span>
+<span><span class="co">##     init.theta = 0.07743871374, link = log)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Coefficients:</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)  </span></span>
+<span><span class="co">## (Intercept)    0.4641     0.8559   0.542   0.5876  </span></span>
+<span><span class="co">## sexM          -1.0148     0.8294  -1.224   0.2211  </span></span>
+<span><span class="co">## ethnHispanic   1.3424     1.3201   1.017   0.3092  </span></span>
+<span><span class="co">## ethnWhite      0.2429     0.7765   0.313   0.7544  </span></span>
+<span><span class="co">## homelessyes    1.6445     0.7073   2.325   0.0201 *</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## (Dispersion parameter for Negative Binomial(0.0774) family taken to be 1)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     Null deviance: 62.365  on 114  degrees of freedom</span></span>
+<span><span class="co">## Residual deviance: 56.232  on 110  degrees of freedom</span></span>
+<span><span class="co">##   (2 observations deleted due to missingness)</span></span>
+<span><span class="co">## AIC: 306.26</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Number of Fisher Scoring iterations: 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##               Theta:  0.0774 </span></span>
+<span><span class="co">##           Std. Err.:  0.0184 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  2 x log-likelihood:  -294.2550</span></span></code></pre>
 </div>
-<div id="likelihood-ratio-test" class="section level2">
-<h2 class="hasAnchor">
-<a href="#likelihood-ratio-test" class="anchor"></a>Likelihood ratio test</h2>
-<p>Basis: Under <span class="math inline">\(H_0\)</span>: no improvement in fit by more complex model, difference in model residual deviances is <span class="math inline">\(\chi^2\)</span>-distributed.</p>
-<p>Deviance: <span class="math inline">\(\Delta (\textrm{D}) = -2 * \Delta (\textrm{log likelihood})\)</span></p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="op">(</span><span class="va">ll.negbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span><span class="op">)</span></pre></div>
-<pre><code>## 'log Lik.' -147.1277 (df=6)</code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="op">(</span><span class="va">ll.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html">logLik</a></span><span class="op">(</span><span class="va">fit.pois</span><span class="op">)</span><span class="op">)</span></pre></div>
-<pre><code>## 'log Lik.' -730.0133 (df=5)</code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html">pchisq</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="op">(</span><span class="va">ll.negbin</span> <span class="op">-</span> <span class="va">ll.pois</span><span class="op">)</span>, df<span class="op">=</span><span class="fl">1</span>, 
-       lower.tail<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></pre></div>
-<pre><code>## 'log Lik.' 1.675949e-255 (df=6)</code></pre>
+<div class="section level3">
+<h3 id="likelihood-ratio-test">Likelihood ratio test<a class="anchor" aria-label="anchor" href="#likelihood-ratio-test"></a>
+</h3>
+<p>Basis: Under <span class="math inline">\(H_0\)</span>: no improvement
+in fit by more complex model, difference in model residual deviances is
+<span class="math inline">\(\chi^2\)</span>-distributed.</p>
+<p>Deviance: <span class="math inline">\(\Delta (\textrm{D}) = -2 *
+\Delta (\textrm{log likelihood})\)</span></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">ll.negbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">fit.negbin</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'log Lik.' -147.1277 (df=6)</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">ll.pois</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">fit.pois</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'log Lik.' -730.0133 (df=5)</span></span></code></pre>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">pchisq</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="op">(</span><span class="va">ll.negbin</span> <span class="op">-</span> <span class="va">ll.pois</span><span class="op">)</span>, df<span class="op">=</span><span class="fl">1</span>, </span>
+<span>       lower.tail<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'log Lik.' 1.675949e-255 (df=6)</span></span></code></pre>
 </div>
-<div id="nb-regression-residuals-plots" class="section level2">
-<h2 class="hasAnchor">
-<a href="#nb-regression-residuals-plots" class="anchor"></a>NB regression residuals plots</h2>
+<div class="section level3">
+<h3 id="nb-regression-residuals-plots">NB regression residuals plots<a class="anchor" aria-label="anchor" href="#nb-regression-residuals-plots"></a>
+</h3>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 </div>
 </div>
-<div id="zero-inflation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#zero-inflation" class="anchor"></a>Zero Inflation</h1>
-<div id="zero-inflated-two-step-models" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-two-step-models" class="anchor"></a>Zero inflated “two-step” models</h2>
-<p><strong>Step 1</strong>: logistic model to determine whether count is zero or Poisson/NB</p>
-<p><strong>Step 2</strong>: Poisson or NB regression distribution for <span class="math inline">\(y_i\)</span> not set to zero by <em>1.</em></p>
+<div class="section level2">
+<h2 id="zero-inflation">Zero Inflation<a class="anchor" aria-label="anchor" href="#zero-inflation"></a>
+</h2>
+<div class="section level3">
+<h3 id="zero-inflated-two-step-models">Zero inflated “two-step” models<a class="anchor" aria-label="anchor" href="#zero-inflated-two-step-models"></a>
+</h3>
+<p><strong>Step 1</strong>: logistic model to determine whether count is
+zero or Poisson/NB</p>
+<p><strong>Step 2</strong>: Poisson or NB regression distribution for
+<span class="math inline">\(y_i\)</span> not set to zero by
+<em>1.</em></p>
 </div>
-<div id="poisson-distribution-with-zero-inflation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#poisson-distribution-with-zero-inflation" class="anchor"></a>Poisson Distribution with Zero Inflation</h2>
+<div class="section level3">
+<h3 id="poisson-distribution-with-zero-inflation">Poisson Distribution with Zero Inflation<a class="anchor" aria-label="anchor" href="#poisson-distribution-with-zero-inflation"></a>
+</h3>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
-<div id="zero-inflated-poisson-regression" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-poisson-regression" class="anchor"></a>Zero-inflated Poisson regression</h2>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/atahk/pscl">pscl</a></span><span class="op">)</span>
-<span class="va">fit.ZIpois</span> <span class="op">&lt;-</span>
-  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,
-                 dist <span class="op">=</span> <span class="st">"poisson"</span>,
-                 data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<div class="section level3">
+<h3 id="zero-inflated-poisson-regression">Zero-inflated Poisson regression<a class="anchor" aria-label="anchor" href="#zero-inflated-poisson-regression"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/atahk/pscl" class="external-link">pscl</a></span><span class="op">)</span></span>
+<span><span class="va">fit.ZIpois</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html" class="external-link">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,</span>
+<span>                 dist <span class="op">=</span> <span class="st">"poisson"</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="section-1" class="section level2">
-<h2></h2>
-
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZIpois</span><span class="op">)</span></pre></div>
-<pre><code>## 
-## Call:
-## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
-##     dist = "poisson")
-## 
-## Pearson residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.0761 -0.5784 -0.4030 -0.3341 10.6835 
-## 
-## Count model coefficients (poisson with log link):
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)    3.2168     0.1796  17.908  &lt; 2e-16 ***
-## sexM          -1.4725     0.1442 -10.212  &lt; 2e-16 ***
-## ethnHispanic  -0.1524     0.1576  -0.968 0.333244    
-## ethnWhite     -0.5236     0.1464  -3.577 0.000348 ***
-## homelessyes    1.2034     0.1455   8.268  &lt; 2e-16 ***
-## 
-## Zero-inflation model coefficients (binomial with logit link):
-##              Estimate Std. Error z value Pr(&gt;|z|)   
-## (Intercept)   2.06263    0.65227   3.162  0.00157 **
-## sexM         -0.05068    0.58252  -0.087  0.93068   
-## ethnHispanic -1.76122    0.81177  -2.170  0.03004 * 
-## ethnWhite    -0.50187    0.56919  -0.882  0.37792   
-## homelessyes  -0.53013    0.48108  -1.102  0.27047   
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-## 
-## Number of iterations in BFGS optimization: 12 
-## Log-likelihood: -299.8 on 10 Df</code></pre>
+<div class="section level3">
+<h3 id="section-1"></h3>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.ZIpois</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, </span></span>
+<span><span class="co">##     dist = "poisson")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Pearson residuals:</span></span>
+<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">## -1.0761 -0.5784 -0.4030 -0.3341 10.6835 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Count model coefficients (poisson with log link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">## (Intercept)    3.2168     0.1796  17.908  &lt; 2e-16 ***</span></span>
+<span><span class="co">## sexM          -1.4725     0.1442 -10.212  &lt; 2e-16 ***</span></span>
+<span><span class="co">## ethnHispanic  -0.1524     0.1576  -0.968 0.333244    </span></span>
+<span><span class="co">## ethnWhite     -0.5236     0.1464  -3.577 0.000348 ***</span></span>
+<span><span class="co">## homelessyes    1.2034     0.1455   8.268  &lt; 2e-16 ***</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Zero-inflation model coefficients (binomial with logit link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
+<span><span class="co">## (Intercept)   2.06263    0.65227   3.162  0.00157 **</span></span>
+<span><span class="co">## sexM         -0.05068    0.58252  -0.087  0.93068   </span></span>
+<span><span class="co">## ethnHispanic -1.76122    0.81177  -2.170  0.03004 * </span></span>
+<span><span class="co">## ethnWhite    -0.50187    0.56919  -0.882  0.37792   </span></span>
+<span><span class="co">## homelessyes  -0.53013    0.48108  -1.102  0.27047   </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Number of iterations in BFGS optimization: 12 </span></span>
+<span><span class="co">## Log-likelihood: -299.8 on 10 Df</span></span></code></pre>
 </div>
-<div id="zero-inflated-negative-binomial-regression" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-negative-binomial-regression" class="anchor"></a>Zero-inflated Negative Binomial regression</h2>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="va">fit.ZInegbin</span> <span class="op">&lt;-</span> 
-  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,
-                         dist <span class="op">=</span> <span class="st">"negbin"</span>,
-                         data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<div class="section level3">
+<h3 id="zero-inflated-negative-binomial-regression">Zero-inflated Negative Binomial regression<a class="anchor" aria-label="anchor" href="#zero-inflated-negative-binomial-regression"></a>
+</h3>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit.ZInegbin</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html" class="external-link">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span>,</span>
+<span>                         dist <span class="op">=</span> <span class="st">"negbin"</span>,</span>
+<span>                         data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
-<em>NOTE</em>: zero-inflation model can include any of your variables as predictors</li>
+<em>NOTE</em>: zero-inflation model can include any of your
+variables as predictors</li>
 <li>
-<em>WARNING</em> Default in <code>zerinfl()</code> function is to use <em>all</em> variables as predictors in logistic model</li>
+<em>WARNING</em> Default in <code>zerinfl()</code> function is to
+use <em>all</em> variables as predictors in logistic model</li>
 </ul>
 </div>
-<div id="section-2" class="section level2">
-<h2></h2>
-
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInegbin</span><span class="op">)</span></pre></div>
-<pre><code>## 
-## Call:
-## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, 
-##     dist = "negbin")
-## 
-## Pearson residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.5402 -0.3255 -0.2714 -0.1926  5.1496 
-## 
-## Count model coefficients (negbin with log link):
-##              Estimate Std. Error z value Pr(&gt;|z|)   
-## (Intercept)    2.8410     1.1845   2.399  0.01646 * 
-## sexM          -2.2282     0.9351  -2.383  0.01718 * 
-## ethnHispanic  -0.4123     0.9831  -0.419  0.67492   
-## ethnWhite     -0.4299     0.8648  -0.497  0.61908   
-## homelessyes    1.9460     0.7103   2.740  0.00615 **
-## Log(theta)    -1.1971     0.5159  -2.320  0.02032 * 
-## 
-## Zero-inflation model coefficients (binomial with logit link):
-##              Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)    1.6867     0.8465   1.993   0.0463 *
-## sexM          -0.9920     0.8016  -1.238   0.2159  
-## ethnHispanic -13.1868   281.9134  -0.047   0.9627  
-## ethnWhite     -0.7455     0.7304  -1.021   0.3074  
-## homelessyes    0.3554     0.7397   0.480   0.6309  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-## 
-## Theta = 0.3021 
-## Number of iterations in BFGS optimization: 24 
-## Log-likelihood: -142.8 on 11 Df</code></pre>
+<div class="section level3">
+<h3 id="section-2"></h3>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.ZInegbin</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless, data = needledat2, </span></span>
+<span><span class="co">##     dist = "negbin")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Pearson residuals:</span></span>
+<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">## -0.5402 -0.3255 -0.2714 -0.1926  5.1496 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Count model coefficients (negbin with log link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)   </span></span>
+<span><span class="co">## (Intercept)    2.8410     1.1845   2.399  0.01646 * </span></span>
+<span><span class="co">## sexM          -2.2282     0.9351  -2.383  0.01718 * </span></span>
+<span><span class="co">## ethnHispanic  -0.4123     0.9831  -0.419  0.67492   </span></span>
+<span><span class="co">## ethnWhite     -0.4299     0.8648  -0.497  0.61908   </span></span>
+<span><span class="co">## homelessyes    1.9460     0.7103   2.740  0.00615 **</span></span>
+<span><span class="co">## Log(theta)    -1.1971     0.5159  -2.320  0.02032 * </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Zero-inflation model coefficients (binomial with logit link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)  </span></span>
+<span><span class="co">## (Intercept)    1.6867     0.8465   1.993   0.0463 *</span></span>
+<span><span class="co">## sexM          -0.9920     0.8016  -1.238   0.2159  </span></span>
+<span><span class="co">## ethnHispanic -13.1868   281.9134  -0.047   0.9627  </span></span>
+<span><span class="co">## ethnWhite     -0.7455     0.7304  -1.021   0.3074  </span></span>
+<span><span class="co">## homelessyes    0.3554     0.7397   0.480   0.6309  </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Theta = 0.3021 </span></span>
+<span><span class="co">## Number of iterations in BFGS optimization: 24 </span></span>
+<span><span class="co">## Log-likelihood: -142.8 on 11 Df</span></span></code></pre>
 </div>
-<div id="zero-inflated-nb---simplified" class="section level2">
-<h2 class="hasAnchor">
-<a href="#zero-inflated-nb---simplified" class="anchor"></a>Zero-inflated NB - simplified</h2>
+<div class="section level3">
+<h3 id="zero-inflated-nb---simplified">Zero-inflated NB - simplified<a class="anchor" aria-label="anchor" href="#zero-inflated-nb---simplified"></a>
+</h3>
 <ul>
-<li>Model is much more interpretable if the exposure of interest is <em>not</em> included in the zero-inflation model.</li>
-<li>E.g. with HIV status as the only predictor in zero-inflation model:</li>
+<li>Model is much more interpretable if the exposure of interest is
+<em>not</em> included in the zero-inflation model.</li>
+<li>E.g. with HIV status as the only predictor in zero-inflation
+model:</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="va">fit.ZInb2</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> 
-                        <span class="va">homeless</span> <span class="op">+</span> <span class="va">hiv</span> <span class="op">|</span> <span class="va">hiv</span>,
-                      dist <span class="op">=</span> <span class="st">"negbin"</span>,
-                      data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit.ZInb2</span> <span class="op">&lt;-</span> <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html" class="external-link">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ethn</span> <span class="op">+</span> </span>
+<span>                        <span class="va">homeless</span> <span class="op">+</span> <span class="va">hiv</span> <span class="op">|</span> <span class="va">hiv</span>,</span>
+<span>                      dist <span class="op">=</span> <span class="st">"negbin"</span>,</span>
+<span>                      data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="section-3" class="section level2">
-<h2></h2>
-
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInb2</span><span class="op">)</span></pre></div>
-<pre><code>## 
-## Call:
-## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, 
-##     data = needledat2, dist = "negbin")
-## 
-## Pearson residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.4299 -0.3646 -0.3559 -0.3299  6.3053 
-## 
-## Count model coefficients (negbin with log link):
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)    3.6685     0.9470   3.874 0.000107 ***
-## sexM          -1.7648     0.6205  -2.844 0.004454 ** 
-## ethnHispanic  -1.5807     0.7446  -2.123 0.033769 *  
-## ethnWhite     -1.1267     0.6924  -1.627 0.103687    
-## homelessyes    1.0313     0.5693   1.812 0.070028 .  
-## hivpositive   -1.0820     1.0167  -1.064 0.287235    
-## hivyes         2.3724     0.7829   3.030 0.002444 ** 
-## Log(theta)     0.1395     0.4647   0.300 0.764009    
-## 
-## Zero-inflation model coefficients (binomial with logit link):
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)    1.2163     0.2851   4.265    2e-05 ***
-## hivpositive   -0.3493     0.9389  -0.372    0.710    
-## hivyes       -17.9654  3065.6271  -0.006    0.995    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-## 
-## Theta = 1.1497 
-## Number of iterations in BFGS optimization: 12 
-## Log-likelihood: -122.5 on 11 Df</code></pre>
+<div class="section level3">
+<h3 id="section-3"></h3>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.ZInb2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless + hiv | hiv, </span></span>
+<span><span class="co">##     data = needledat2, dist = "negbin")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Pearson residuals:</span></span>
+<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">## -0.4299 -0.3646 -0.3559 -0.3299  6.3053 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Count model coefficients (negbin with log link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">## (Intercept)    3.6685     0.9470   3.874 0.000107 ***</span></span>
+<span><span class="co">## sexM          -1.7648     0.6205  -2.844 0.004454 ** </span></span>
+<span><span class="co">## ethnHispanic  -1.5807     0.7446  -2.123 0.033769 *  </span></span>
+<span><span class="co">## ethnWhite     -1.1267     0.6924  -1.627 0.103687    </span></span>
+<span><span class="co">## homelessyes    1.0313     0.5693   1.812 0.070028 .  </span></span>
+<span><span class="co">## hivpositive   -1.0820     1.0167  -1.064 0.287235    </span></span>
+<span><span class="co">## hivyes         2.3724     0.7829   3.030 0.002444 ** </span></span>
+<span><span class="co">## Log(theta)     0.1395     0.4647   0.300 0.764009    </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Zero-inflation model coefficients (binomial with logit link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">## (Intercept)    1.2163     0.2851   4.265    2e-05 ***</span></span>
+<span><span class="co">## hivpositive   -0.3493     0.9389  -0.372    0.710    </span></span>
+<span><span class="co">## hivyes       -17.9654  3065.6271  -0.006    0.995    </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Theta = 1.1497 </span></span>
+<span><span class="co">## Number of iterations in BFGS optimization: 12 </span></span>
+<span><span class="co">## Log-likelihood: -122.5 on 11 Df</span></span></code></pre>
 </div>
-<div id="intercept-only-zi-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#intercept-only-zi-model" class="anchor"></a>Intercept-only ZI model</h2>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="va">fit.ZInb3</span> <span class="op">&lt;-</span>
-  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span><span class="op">|</span><span class="fl">1</span>,
-           dist <span class="op">=</span> <span class="st">"negbin"</span>,
-           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></pre></div>
+<div class="section level3">
+<h3 id="intercept-only-zi-model">Intercept-only ZI model<a class="anchor" aria-label="anchor" href="#intercept-only-zi-model"></a>
+</h3>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit.ZInb3</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu">pscl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pscl/man/zeroinfl.html" class="external-link">zeroinfl</a></span><span class="op">(</span><span class="va">shared_syr</span><span class="op">~</span><span class="va">sex</span><span class="op">+</span><span class="va">ethn</span><span class="op">+</span><span class="va">homeless</span><span class="op">|</span><span class="fl">1</span>,</span>
+<span>           dist <span class="op">=</span> <span class="st">"negbin"</span>,</span>
+<span>           data <span class="op">=</span> <span class="va">needledat2</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="section-4" class="section level2">
-<h2></h2>
-
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></pre></div>
-<pre><code>## 
-## Call:
-## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, 
-##     dist = "negbin")
-## 
-## Pearson residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.3159 -0.3123 -0.3040 -0.2953  5.2940 
-## 
-## Count model coefficients (negbin with log link):
-##              Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)   2.08542    1.42671   1.462   0.1438  
-## sexM         -1.43809    0.89189  -1.612   0.1069  
-## ethnHispanic  0.48130    1.16642   0.413   0.6799  
-## ethnWhite    -0.07418    0.81066  -0.092   0.9271  
-## homelessyes   1.62076    0.67706   2.394   0.0167 *
-## Log(theta)   -1.12538    0.89372  -1.259   0.2080  
-## 
-## Zero-inflation model coefficients (binomial with logit link):
-##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)   0.5211     0.7600   0.686    0.493
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-## 
-## Theta = 0.3245 
-## Number of iterations in BFGS optimization: 13 
-## Log-likelihood: -146.8 on 7 Df</code></pre>
+<div class="section level3">
+<h3 id="section-4"></h3>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## pscl::zeroinfl(formula = shared_syr ~ sex + ethn + homeless | 1, data = needledat2, </span></span>
+<span><span class="co">##     dist = "negbin")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Pearson residuals:</span></span>
+<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">## -0.3159 -0.3123 -0.3040 -0.2953  5.2940 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Count model coefficients (negbin with log link):</span></span>
+<span><span class="co">##              Estimate Std. Error z value Pr(&gt;|z|)  </span></span>
+<span><span class="co">## (Intercept)   2.08542    1.42671   1.462   0.1438  </span></span>
+<span><span class="co">## sexM         -1.43809    0.89189  -1.612   0.1069  </span></span>
+<span><span class="co">## ethnHispanic  0.48130    1.16642   0.413   0.6799  </span></span>
+<span><span class="co">## ethnWhite    -0.07418    0.81066  -0.092   0.9271  </span></span>
+<span><span class="co">## homelessyes   1.62076    0.67706   2.394   0.0167 *</span></span>
+<span><span class="co">## Log(theta)   -1.12538    0.89372  -1.259   0.2080  </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Zero-inflation model coefficients (binomial with logit link):</span></span>
+<span><span class="co">##             Estimate Std. Error z value Pr(&gt;|z|)</span></span>
+<span><span class="co">## (Intercept)   0.5211     0.7600   0.686    0.493</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Theta = 0.3245 </span></span>
+<span><span class="co">## Number of iterations in BFGS optimization: 13 </span></span>
+<span><span class="co">## Log-likelihood: -146.8 on 7 Df</span></span></code></pre>
 </div>
-<div id="confidence-intervals" class="section level2">
-<h2 class="hasAnchor">
-<a href="#confidence-intervals" class="anchor"></a>Confidence intervals</h2>
-<p>Use the <code><a href="https://rdrr.io/r/stats/confint.html">confint()</a></code> function for all these models (don’t try to specify which package confint comes from). E.g.:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/stats/confint.html">confint</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></pre></div>
-<pre><code>##                         2.5 %    97.5 %
-## count_(Intercept)  -0.7108906 4.8817285
-## count_sexM         -3.1861592 0.3099794
-## count_ethnHispanic -1.8048349 2.7674386
-## count_ethnWhite    -1.6630517 1.5146931
-## count_homelessyes   0.2937565 2.9477701
-## zero_(Intercept)   -0.9685313 2.0106906</code></pre>
+<div class="section level3">
+<h3 id="confidence-intervals">Confidence intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a>
+</h3>
+<p>Use the <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> function for all these models (don’t
+try to specify which package confint comes from). E.g.:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">fit.ZInb3</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##                         2.5 %    97.5 %</span></span>
+<span><span class="co">## count_(Intercept)  -0.7108906 4.8817285</span></span>
+<span><span class="co">## count_sexM         -3.1861592 0.3099794</span></span>
+<span><span class="co">## count_ethnHispanic -1.8048349 2.7674386</span></span>
+<span><span class="co">## count_ethnWhite    -1.6630517 1.5146931</span></span>
+<span><span class="co">## count_homelessyes   0.2937565 2.9477701</span></span>
+<span><span class="co">## zero_(Intercept)   -0.9685313 2.0106906</span></span></code></pre>
 </div>
-<div id="residuals-vs--fitted-values" class="section level2">
-<h2 class="hasAnchor">
-<a href="#residuals-vs--fitted-values" class="anchor"></a>Residuals vs. fitted values</h2>
-<p>I invisibly define functions <code>plotpanel1</code> and <code>plotpanel2</code> that will work for all types of models (see lab). These use Pearson residuals.</p>
+<div class="section level3">
+<h3 id="residuals-vs--fitted-values">Residuals vs. fitted values<a class="anchor" aria-label="anchor" href="#residuals-vs--fitted-values"></a>
+</h3>
+<p>I invisibly define functions <code>plotpanel1</code> and
+<code>plotpanel2</code> that will work for all types of models (see
+lab). These use Pearson residuals.</p>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
 </div>
-<div id="quantile-quantile-plots-for-residuals" class="section level2">
-<h2 class="hasAnchor">
-<a href="#quantile-quantile-plots-for-residuals" class="anchor"></a>Quantile-quantile plots for residuals</h2>
+<div class="section level3">
+<h3 id="quantile-quantile-plots-for-residuals">Quantile-quantile plots for residuals<a class="anchor" aria-label="anchor" href="#quantile-quantile-plots-for-residuals"></a>
+</h3>
 <p><img src="session_lecture_files/figure-html/unnamed-chunk-24-1.png" width="700"><em>still</em> over-dispersed - ideas?</p>
 </div>
-<div id="summary-conclusions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#summary-conclusions" class="anchor"></a>Summary / Conclusions</h2>
+<div class="section level3">
+<h3 id="summary-conclusions">Summary / Conclusions<a class="anchor" aria-label="anchor" href="#summary-conclusions"></a>
+</h3>
 <ul>
 <li>These are multiplicative models</li>
-<li>Fitting zero-inflated models can be problematic (convergence, over-complicated default models), especially for small samples</li>
+<li>Fitting zero-inflated models can be problematic (convergence,
+over-complicated default models), especially for small samples</li>
 <li>Use QQ and residuals plots to assess model fit</li>
 <li>Can use LRT to compare nested models</li>
 </ul>
@@ -617,11 +655,13 @@ y_i \sim NB(\lambda_i, \theta)
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://waldronlab.io">Levi Waldron</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://waldronlab.io" class="external-link">Levi Waldron</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -629,6 +669,8 @@ y_i \sim NB(\lambda_i, \theta)
 
   
 
+
+  
 
   </body>
 </html>
